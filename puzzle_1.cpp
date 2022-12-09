@@ -4,7 +4,6 @@
 using namespace std;
 
 int main(void) {
-
     ifstream inputFile("./input.txt");
 
     int currentSum = 0;
@@ -34,5 +33,4 @@ int main(void) {
     cout << max << endl;
 
     return 0;
-
 }
