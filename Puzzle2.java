@@ -3,7 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 
-public class Puzzle2Solution {
+public class Puzzle2 {
 
     public static void main(String[] args) throws FileNotFoundException {
         File inputFile = new File("./input.txt");
