@@ -1,1 +1,1 @@
-This repository contains my solutions for Advent of Code 2022.
+This repository contains my solutions for Advent of Code 2022. Each day has a repository branch.
