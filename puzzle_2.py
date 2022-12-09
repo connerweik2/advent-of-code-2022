@@ -12,7 +12,7 @@ with open('./input.txt', 'r') as f:
             this_calorie_sum += int(this_line)
         else:
             # We have finished an elf's calorie list.
-            # Update the heap accordingly.
+            # Update the heap accordingly and reset the current calorie sum.
             if this_calorie_sum > heap[0]:
                 heapq.heapreplace(heap, this_calorie_sum)
             this_calorie_sum = 0
