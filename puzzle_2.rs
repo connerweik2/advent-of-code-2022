@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 
 fn main() {
-    let input_file = File::open("../../input.txt").expect("Failed to open input file");
+    let input_file = File::open("./input.txt").expect("Failed to open input file");
 
     let mut max: i32 = 0;
     let mut current_sum: i32 = 0;

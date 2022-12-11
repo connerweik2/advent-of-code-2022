@@ -5,7 +5,7 @@ use std::cmp::Reverse;
 
 
 fn main() {
-    let input_file = File::open("../../input.txt").expect("Failed to open input file");
+    let input_file = File::open("./input.txt").expect("Failed to open input file");
 
     let mut heap = BinaryHeap::new();
     heap.push(Reverse(-1));
