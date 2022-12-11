@@ -1,20 +1,15 @@
-this_calorie_sum = 0
-max_calorie_sum = 0
+result_score = 0
 
 with open('./input.txt', 'r') as f:
     for this_line in f:
-        if this_line.rstrip().isnumeric():
-            # If this is a number, update the current calorie sum.
-            this_calorie_sum += int(this_line)
-        else:
-            # We have finished an elf's calorie list.
-            # Update max and reset current calorie sum.
-            if this_calorie_sum > max_calorie_sum:
-                max_calorie_sum = this_calorie_sum
-            this_calorie_sum = 0
+        this_line_stripped = this_line.lstrip().rstrip()
+        opponent_choice = ord(this_line_stripped[0]) - ord('A')
+        my_choice = ord(this_line_stripped[2]) - ord('X')
 
-# Update the max for the last elf.
-if this_calorie_sum > max_calorie_sum:
-    max_calorie_sum = this_calorie_sum
-
-print(max_calorie_sum)
+        result_score += my_choice + 1
+        if opponent_choice == my_choice:
+            result_score += 3
+        elif (opponent_choice + 1) % 3 == my_choice:
+            result_score += 6
+    
+print(result_score)
