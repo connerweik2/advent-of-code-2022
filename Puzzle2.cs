@@ -10,7 +10,6 @@ using (StreamReader sr = File.OpenText("./input.txt"))
     while ((thisLine = sr.ReadLine()) != null)
     {
 
-        Console.WriteLine(thisLine);
         int thisLineInt = 0;
         bool result = int.TryParse(thisLine, out thisLineInt);
         if (result)
@@ -28,5 +27,12 @@ using (StreamReader sr = File.OpenText("./input.txt"))
         }
     }
 
-    for (int i = 0; i < )
+    int resultSum = 0;
+
+    for (int i = 0; i < 3; i++)
+    {
+        resultSum += pq.Dequeue();
+    }
+
+    Console.WriteLine(resultSum);
 }
