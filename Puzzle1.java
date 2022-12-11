@@ -8,32 +8,30 @@ public class Puzzle1 {
         File inputFile = new File("./input.txt");
         Scanner in = new Scanner(inputFile);
 
-        // The highest number of calories any Elf is carrying.
-        int max = 0;
+        int totalScore = 0;
 
         while (in.hasNextLine()) {
-            int thisElfCalories = 0;
-            while (in.hasNextLine()) {
-                String thisLine = in.nextLine();
-                try {
-                    // If this is an integer, updateThisElfCalories and update max accordingly.
-                    thisElfCalories += Integer.parseInt(thisLine);
-                    if (thisElfCalories > max) {
-                        max = thisElfCalories;
-                    }
+            char myChoice = in.next().charAt(0);
+            char opponentChoice = in.next().charAt(0);
 
-                } catch (NumberFormatException e) {
-                    // Otherwise, this is a blank line, which means we reached the end of an elf's list.
-                    // Reset thisElfCalories for the next elf.
-                    thisElfCalories = 0;
-                }
+            // 1 for Rock, 2 for Paper, 3 for Scissors
+            totalScore += (int)(myChoice - 'A' + 1);
+
+            if (myChoice == opponentChoice) {
+                totalScore += 3;
+            }
+            else if (myChoice == 'A' && opponentChoice == 'Z' ||
+                     myChoice == 'B' && opponentChoice == 'X' ||
+                     myChoice == 'C' && opponentChoice == 'Y'
+                    ) {
+                totalScore += 6;
             }
         }
 
+        System.out.println(totalScore);
+
         in.close();
 
-        // Print the result.
-        System.out.println(max);
     }
 
 }
