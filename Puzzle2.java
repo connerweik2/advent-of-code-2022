@@ -1,27 +1,41 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
-public class Puzzle2 {
+public class Puzzle1 {
 
     public static void main(String[] args) throws FileNotFoundException {
         File inputFile = new File("./input.txt");
         Scanner in = new Scanner(inputFile);
 
-        int totalScore = 0;
+        int result = 0;
 
         while (in.hasNextLine()) {
+            // Use a frequency map for characters.
+            Map<Character, Integer> map  = new HashMap<>();
+            // Done in groups of 3.
             String lineTrimmed = in.nextLine().trim();
-            
-            int opponentChoice = (int)(lineTrimmed.charAt(0) - 'A');
-            int roundResult = (int)(lineTrimmed.charAt(2) - 'X');
+            Set<Character> second = new HashSet<Character>();
+            for (int i = 0; i < lineTrimmed.length() / 2; i++) {
+                first.add(lineTrimmed.charAt(i));
+            }
+            for (int i = lineTrimmed.length() /  2; i < lineTrimmed.length(); i++) {
+                second.add(lineTrimmed.charAt(i));
+            }
 
-            if (roundResult == 1) totalScore += 3;
-            if (roundResult == 2) totalScore += 6;
-            totalScore += (opponentChoice + roundResult - 1 + 3) % 3 + 1;
+            // Check if each character in the first set is in both sets.
+            // Add the priority of the character that is in both sets to result.
+            for (Character c : first) {
+                if (second.contains(c)) {
+                    if (Character.isLowerCase(c)) result += (int)(c - 'a' + 1);
+                    else result += (int)(c - 'A' + 27);
+                }
+            }
         }
 
-        System.out.println(totalScore);
+        System.out.println(result);
 
         in.close();
 

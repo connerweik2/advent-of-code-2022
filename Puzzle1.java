@@ -15,8 +15,8 @@ public class Puzzle1 {
         while (in.hasNextLine()) {
             String lineTrimmed = in.nextLine().trim();
             // Use a set for each compartment for all of that compartment's characters.
-            Set<Character> first = new HashSet<Character>();
-            Set<Character> second = new HashSet<Character>();
+            Set<Character> first = new HashSet<>();
+            Set<Character> second = new HashSet<>();
             for (int i = 0; i < lineTrimmed.length() / 2; i++) {
                 first.add(lineTrimmed.charAt(i));
             }
