@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Puzzle1 {
 
@@ -8,21 +10,26 @@ public class Puzzle1 {
         File inputFile = new File("./input.txt");
         Scanner in = new Scanner(inputFile);
 
-        int totalScore = 0;
+        int result = 0;
 
         while (in.hasNextLine()) {
             String lineTrimmed = in.nextLine().trim();
-            
-            int opponentChoice = (int)(lineTrimmed.charAt(0) - 'A');
-            int myChoice = (int)(lineTrimmed.charAt(2) - 'X');
-
-            totalScore += myChoice + 1;
-
-            if (opponentChoice == myChoice) {
-                totalScore += 3;
+            // Use a set for each compartment for all of that compartment's characters.
+            Set<Character> first = new HashSet<Character>();
+            Set<Character> second = new HashSet<Character>();
+            for (int i = 0; i < lineTrimmed.length() / 2; i++) {
+                first.add(lineTrimmed.charAt(i));
             }
-            else if ((opponentChoice + 1) % 3 == myChoice) {
-                totalScore += 6;
+            for (int i = lineTrimmed.length() /  2; i < lineTrimmed.length(); i++) {
+                second.add(lineTrimmed.charAt(i));
+            }
+
+            // Check if each character in the first set is in both sets.
+            // Add the priority of the character that is in both sets to result.
+            for (Character c : first) {
+                if (second.contains(c)) {
+                    
+                }
             }
         }
 
