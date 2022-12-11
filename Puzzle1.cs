@@ -8,7 +8,7 @@ using (StreamReader sr = File.OpenText("./input.txt"))
     {
         string thisLineTrim = thisLine.Trim();
 
-        // The opponent's and our choice.
+        // The opponent's choice and our choice.
         // 0 for rock, 1 for paper, 2 for scissors.
         int opponentChoice = (int)(thisLineTrim[0] - 'A');
         int myChoice = (int)(thisLineTrim[2] - 'X');

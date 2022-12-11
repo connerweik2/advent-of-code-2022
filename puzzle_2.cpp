@@ -26,7 +26,6 @@ int main(void) {
         // opponent; if win, pick 1 to the right. Update score accordingly:
         // 1 for rock, 2 for paper, 3 for scissors.
         resultScore += (opponentChoice + roundResult - 1 + 3) % 3 + 1;
-
     }
 
     inputFile.close();

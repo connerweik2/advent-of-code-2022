@@ -4,13 +4,14 @@ use std::io::{self, BufRead};
 fn main() {
     let input_file = File::open("./input.txt").expect("Failed to open input file");
 
-    let mut max: i32 = 0;
+    let mut result_score: i32 = 0;
     let mut current_sum: i32 = 0;
 
     let lines = io::BufReader::new(input_file).lines();
     for line in lines {
-        let line_unwrapped = line.unwrap();
-        let parse_result = line_unwrapped.parse::<i32>();
+        let line_bytes = line.as_bytes();
+        let opponent_choice: i32 = 
+        let opponent_choice
         if parse_result.is_ok() {
             current_sum += parse_result.unwrap();
         } else {
