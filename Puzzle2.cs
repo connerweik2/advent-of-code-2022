@@ -1,38 +1,35 @@
-﻿int currentSum = 0;
-PriorityQueue<int, int> pq = new PriorityQueue<int, int>();
-pq.Enqueue(-1, -1);
-pq.Enqueue(-1, -1);
-pq.Enqueue(-1, -1);
+﻿int resultScore = 0;
 
 using (StreamReader sr = File.OpenText("./input.txt"))
 {
     string thisLine;
+
     while ((thisLine = sr.ReadLine()) != null)
     {
+        string thisLineTrim = thisLine.Trim();
 
-        int thisLineInt = 0;
-        bool result = int.TryParse(thisLine, out thisLineInt);
-        if (result)
+        // The opponent's choice: 0 for rock, 1 for paper, 2 for scissors.
+        // And the round result: 0 for loss, 1 for draw, 2 for win.
+        int opponentChoice = (int)(thisLineTrim[0] - 'A');
+        int roundResult = (int)(thisLineTrim[2] - 'X');
+
+        // Add score based on the round result.
+        if (roundResult == 1)
         {
-            currentSum += thisLineInt;
+            resultScore += 3;
         }
-        else
+        else if (roundResult == 2)
         {
-            if (currentSum > pq.Peek())
-            {
-                pq.Dequeue();
-                pq.Enqueue(currentSum, currentSum);
-            }
-            currentSum = 0;
+            resultScore += 6;
         }
+
+        // Based on the round result, we know which we will pick:
+        // if loss, pick 1 to the left of the opponent in [rock, paper, scissors],
+        // wrapping around at the ends; if draw, pick the same as the
+        // opponent; if win, pick 1 to the right. Update score accordingly:
+        // 1 for rock, 2 for paper, 3 for scissors.
+        resultScore += (opponentChoice + roundResult - 1 + 3) % 3 + 1;
     }
-
-    int resultSum = 0;
-
-    for (int i = 0; i < 3; i++)
-    {
-        resultSum += pq.Dequeue();
-    }
-
-    Console.WriteLine(resultSum);
 }
+
+Console.WriteLine(resultScore);

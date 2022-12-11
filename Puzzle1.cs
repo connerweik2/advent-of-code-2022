@@ -1,27 +1,34 @@
-int max = 0;
-int currentSum = 0;
+int resultScore = 0;
+
 using (StreamReader sr = File.OpenText("./input.txt"))
 {
     string thisLine;
+
     while ((thisLine = sr.ReadLine()) != null)
     {
+        string thisLineTrim = thisLine.Trim();
 
-        Console.WriteLine(thisLine);
-        int thisLineInt = 0;
-        bool result = int.TryParse(thisLine, out thisLineInt);
-        if (result)
+        // The opponent's and our choice.
+        // 0 for rock, 1 for paper, 2 for scissors.
+        int opponentChoice = (int)(thisLineTrim[0] - 'A');
+        int myChoice = (int)(thisLineTrim[2] - 'X');
+
+        // Add 1 for rock, 2 for paper, 3 for scissors.
+        resultScore += myChoice + 1;
+
+        // Draw: add 3.
+        if (opponentChoice == myChoice)
         {
-            currentSum += thisLineInt;
+            resultScore += 3;
         }
-        else
+        // Win: Add 6. In a win, our choice will be
+        // one to the right of the opponent's in the list
+        // [rock, paper, scissors], wrapping around at the ends.
+        else if ((opponentChoice + 1) % 3 == myChoice)
         {
-            if (currentSum > max)
-            {
-                max = currentSum;
-            }
-            currentSum = 0;
+            resultScore += 6;
         }
     }
-
-    Console.WriteLine(currentSum);
 }
+
+Console.WriteLine(resultScore);
