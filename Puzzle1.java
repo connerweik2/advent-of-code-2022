@@ -34,10 +34,8 @@ public class Puzzle1 {
             }
         }
 
-        System.out.println(result);
-
         in.close();
 
+        System.out.println(result);
     }
-
 }
