@@ -28,12 +28,13 @@ public class Puzzle1 {
             // Add the priority of the character that is in both sets to result.
             for (Character c : first) {
                 if (second.contains(c)) {
-                    
+                    if (Character.isLowerCase(c)) result += (int)(c - 'a' + 1);
+                    else result += (int)(c - 'A' + 27);
                 }
             }
         }
 
-        System.out.println(totalScore);
+        System.out.println(result);
 
         in.close();
 
