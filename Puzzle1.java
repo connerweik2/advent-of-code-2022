@@ -11,19 +11,17 @@ public class Puzzle1 {
         int totalScore = 0;
 
         while (in.hasNextLine()) {
-            char myChoice = in.next().charAt(0);
-            char opponentChoice = in.next().charAt(0);
+            String lineTrimmed = in.nextLine().trim();
+            
+            int opponentChoice = (int)(lineTrimmed.charAt(0) - 'A');
+            int myChoice = (int)(lineTrimmed.charAt(2) - 'X');
 
-            // 1 for Rock, 2 for Paper, 3 for Scissors
-            totalScore += (int)(myChoice - 'A' + 1);
+            totalScore += myChoice + 1;
 
-            if (myChoice == opponentChoice) {
+            if (opponentChoice == myChoice) {
                 totalScore += 3;
             }
-            else if (myChoice == 'A' && opponentChoice == 'Z' ||
-                     myChoice == 'B' && opponentChoice == 'X' ||
-                     myChoice == 'C' && opponentChoice == 'Y'
-                    ) {
+            else if ((opponentChoice + 1) % 3 == myChoice) {
                 totalScore += 6;
             }
         }
