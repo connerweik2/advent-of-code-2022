@@ -6,31 +6,32 @@ using namespace std;
 int main(void) {
     ifstream inputFile("./input.txt");
 
-    int currentSum = 0;
-    int max = 0;
+    int resultScore = 0;
 
     string thisLine;
 
     while (getline(inputFile, thisLine)) {
-        bool isNumber = (thisLine.length() != 0);
-        if (isNumber) {
-            currentSum += stoi(thisLine);
-        } else {
-            if (currentSum > max) {
-                max = currentSum;
-            }
-            currentSum = 0;
-        }
+        // The opponent's and our choices:
+        // 0 for rock, 1 for paper, 2 for scissors.
+        int opponentChoice = thisLine[0] - 'A';
+        int myChoice = thisLine[2] - 'X';
+        
+        // Update score based on our choice.
+        resultScore += myChoice + 1;
+
+        // Draw: Add 3.
+        if (opponentChoice == myChoice) resultScore += 3;
+
+        // Win: Add 6. In a win, our choice will be
+        // one to the right of the opponent's in the list
+        // [rock, paper, scissors], wrapping around at the ends.
+        else if ((opponentChoice + 1) % 3 == myChoice) resultScore += 6;
+
     }
 
     inputFile.close();
 
-    // Update max accordingly for the last elf.
-    if (currentSum > max) {
-        max = currentSum;
-    }
-
-    cout << max << endl;
+    cout << resultScore << endl;
 
     return 0;
 }
