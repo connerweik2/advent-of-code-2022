@@ -14,34 +14,35 @@ func main() {
 	}
 	defer file.Close()
 
-	resultScore := 0
+	result := 0
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		thisLine := scanner.Text()
+		thisLine := (scanner.Text())
 
-		// The opponent's choice and our choice.
-		// 0 for rock, 1 for paper, 2 for scissors.
-		opponentChoice := int(thisLine[0] - 'A')
-		myChoice := int(thisLine[2] - 'X')
+		var left [256]bool
+		var right [256]bool
 
-		// Update the result score based on our choice:
-		// 1 for rock, 2 for paper, 3 for scissors.
-		resultScore += myChoice + 1
+		for i := 0; i < len(thisLine)/2; i++ {
+			left[thisLine[i]] = true
+		}
+		for i := len(thisLine) / 2; i < len(thisLine); i++ {
+			right[thisLine[i]] = true
+		}
 
-		// For a draw, add 3.
-		// For a win, add 6.
-		// In a win, our choice will be
-		// one to the right of the opponent's in the list
-		// [rock, paper, scissors], wrapping around at the ends.
-		if opponentChoice == myChoice {
-			resultScore += 3
-		} else if (opponentChoice+1)%3 == myChoice {
-			resultScore += 6
+		for i := 0; i < 256; i++ {
+			if left[i] && right[i] {
+				if i >= 'a' && i <= 'z' {
+					result += int(i - 'a' + 1)
+				} else {
+					result += int(i - 'A' + 27)
+				}
+				break
+			}
 		}
 	}
 
-	fmt.Println(resultScore)
+	fmt.Println(result)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
