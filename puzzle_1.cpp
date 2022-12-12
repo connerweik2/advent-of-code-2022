@@ -30,9 +30,11 @@ int main(void) {
             if (left[i] && right[i]) {
                 if (i >= 'a' && i <= 'z') {
                     result += i - 'a' + 1;
+                    break;
                 }
                 else {
                     result += i - 'A' + 27;
+                    break;
                 }
             }
         }
