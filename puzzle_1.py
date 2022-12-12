@@ -1,15 +1,25 @@
-result_score = 0
+result = 0
+
+current_line_within_group = 0
 
 with open('./input.txt', 'r') as f:
-    for this_line in f:
-        this_line_stripped = this_line.lstrip().rstrip()
-        opponent_choice = ord(this_line_stripped[0]) - ord('A')
-        my_choice = ord(this_line_stripped[2]) - ord('X')
+    for line in f:
+        line_strip = line.strip()
+        
+        left = set()
+        right = set()
 
-        result_score += my_choice + 1
-        if opponent_choice == my_choice:
-            result_score += 3
-        elif (opponent_choice + 1) % 3 == my_choice:
-            result_score += 6
-    
-print(result_score)
+        for i in range(len(line_strip) // 2):
+            left.add(line_strip[i])
+        for i in range(len(line_strip) // 2, len(line_strip)):
+            right.add(line_strip[i])
+
+        for c in left:
+            if c in right:
+                if c.islower():
+                    result += ord(c) - ord('a') + 1
+                else:
+                    result += ord(c) - ord('A') + 27
+                break
+            
+print(result)
