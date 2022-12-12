@@ -6,32 +6,41 @@ using namespace std;
 int main(void) {
     ifstream inputFile("./input.txt");
 
-    int resultScore = 0;
+    int result = 0;
 
     string thisLine;
 
     while (getline(inputFile, thisLine)) {
-        // The opponent's and our choices:
-        // 0 for rock, 1 for paper, 2 for scissors.
-        int opponentChoice = thisLine[0] - 'A';
-        int myChoice = thisLine[2] - 'X';
-        
-        // Update score based on our choice.
-        resultScore += myChoice + 1;
+        bool left[256];
+        bool right[256];
 
-        // Draw: Add 3.
-        if (opponentChoice == myChoice) resultScore += 3;
+        for (int i = 0; i < 256; i++) {
+            left[i] = false;
+            right[i] = false;
+        }
 
-        // Win: Add 6. In a win, our choice will be
-        // one to the right of the opponent's in the list
-        // [rock, paper, scissors], wrapping around at the ends.
-        else if ((opponentChoice + 1) % 3 == myChoice) resultScore += 6;
+        for (int i = 0; i < thisLine.length() / 2; i++) {
+            left[thisLine[i]] = true;
+        }
+        for (int i = thisLine.length() / 2; i < thisLine.length(); i++) {
+            right[thisLine[i]] = true;
+        }
 
+        for (int i = 0; i < 256; i++) {
+            if (left[i] && right[i]) {
+                if (i >= 'a' && i <= 'z') {
+                    result += i - 'a' + 1;
+                }
+                else {
+                    result += i - 'A' + 27;
+                }
+            }
+        }
     }
 
     inputFile.close();
 
-    cout << resultScore << endl;
+    cout << result << endl;
 
     return 0;
 }
