@@ -1,4 +1,4 @@
-int resultScore = 0;
+int result = 0;
 
 using (StreamReader sr = File.OpenText("./input.txt"))
 {
@@ -6,29 +6,23 @@ using (StreamReader sr = File.OpenText("./input.txt"))
 
     while ((thisLine = sr.ReadLine()) != null)
     {
-        string thisLineTrim = thisLine.Trim();
-
-        // The opponent's choice and our choice.
-        // 0 for rock, 1 for paper, 2 for scissors.
-        int opponentChoice = (int)(thisLineTrim[0] - 'A');
-        int myChoice = (int)(thisLineTrim[2] - 'X');
-
-        // Add 1 for rock, 2 for paper, 3 for scissors.
-        resultScore += myChoice + 1;
-
-        // Draw: add 3.
-        if (opponentChoice == myChoice)
-        {
-            resultScore += 3;
+        HashSet<char> left = new HashSet<char>();
+        HashSet<char> right = new HashSet<char>();
+        for (int i = 0; i < thisLine.Length / 2; i++) {
+            left.Add(thisLine[i]);
         }
-        // Win: Add 6. In a win, our choice will be
-        // one to the right of the opponent's in the list
-        // [rock, paper, scissors], wrapping around at the ends.
-        else if ((opponentChoice + 1) % 3 == myChoice)
-        {
-            resultScore += 6;
+        for (int i = thisLine.Length / 2; i < thisLine.Length; i++) {
+            right.Add(thisLine[i]);
+        }
+
+        foreach (char c in left) {
+            if (right.Contains(c)) {
+                if (Char.IsLower(c)) result += c - 'a' + 1;
+                else result += c - 'A' + 27;
+                break;
+            }
         }
     }
 }
 
-Console.WriteLine(resultScore);
+Console.WriteLine(result);

@@ -1,4 +1,4 @@
-﻿int resultScore = 0;
+﻿int result = 0;
 
 using (StreamReader sr = File.OpenText("./input.txt"))
 {
@@ -6,30 +6,31 @@ using (StreamReader sr = File.OpenText("./input.txt"))
 
     while ((thisLine = sr.ReadLine()) != null)
     {
-        string thisLineTrim = thisLine.Trim();
+        HashSet<char> first = new HashSet<char>();
+        HashSet<char> second = new HashSet<char>();
+        HashSet<char> third = new HashSet<char>();
 
-        // The opponent's choice: 0 for rock, 1 for paper, 2 for scissors.
-        // And the round result: 0 for loss, 1 for draw, 2 for win.
-        int opponentChoice = (int)(thisLineTrim[0] - 'A');
-        int roundResult = (int)(thisLineTrim[2] - 'X');
-
-        // Add score based on the round result.
-        if (roundResult == 1)
-        {
-            resultScore += 3;
+        for (int i = 0; i < thisLine.Length; i++) {
+            first.Add(thisLine[i]);
         }
-        else if (roundResult == 2)
-        {
-            resultScore += 6;
+        thisLine = sr.ReadLine();
+        for (int i = 0; i < thisLine.Length; i++) {
+            second.Add(thisLine[i]);
+        }
+        thisLine = sr.ReadLine();
+        for (int i = 0; i < thisLine.Length; i++) {
+            third.Add(thisLine[i]);
         }
 
-        // Based on the round result, we know which we will pick:
-        // if loss, pick 1 to the left of the opponent in [rock, paper, scissors],
-        // wrapping around at the ends; if draw, pick the same as the
-        // opponent; if win, pick 1 to the right. Update score accordingly:
-        // 1 for rock, 2 for paper, 3 for scissors.
-        resultScore += (opponentChoice + roundResult - 1 + 3) % 3 + 1;
+
+        foreach (char c in first) {
+            if (second.Contains(c) && third.Contains(c)) {
+                if (Char.IsLower(c)) result += c - 'a' + 1;
+                else result += c - 'A' + 27;
+                break;
+            }
+        }
     }
 }
 
-Console.WriteLine(resultScore);
+Console.WriteLine(result);
