@@ -1,25 +1,16 @@
 result = 0
 
-current_line_within_group = 0
-
 with open('./input.txt', 'r') as f:
     for line in f:
-        line_strip = line.strip()
-        
-        left = set()
-        right = set()
+        line_processed = line.strip().split(',')
+        first_min = int(line_processed[0][0:line_processed[0].index('-')])
+        first_max = int(line_processed[0][line_processed[0].index('-')+1:])
+        second_min = int(line_processed[1][0:line_processed[1].index('-')])
+        second_max = int(line_processed[1][line_processed[1].index('-')+1:])
 
-        for i in range(len(line_strip) // 2):
-            left.add(line_strip[i])
-        for i in range(len(line_strip) // 2, len(line_strip)):
-            right.add(line_strip[i])
+        if first_min >= second_min and first_max <= second_max\
+        or second_min >= first_min and second_max <= first_max:
+           result += 1
 
-        for c in left:
-            if c in right:
-                if c.islower():
-                    result += ord(c) - ord('a') + 1
-                else:
-                    result += ord(c) - ord('A') + 27
-                break
             
 print(result)
