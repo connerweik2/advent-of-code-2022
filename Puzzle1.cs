@@ -6,21 +6,16 @@ using (StreamReader sr = File.OpenText("./input.txt"))
 
     while ((thisLine = sr.ReadLine()) != null)
     {
-        HashSet<char> left = new HashSet<char>();
-        HashSet<char> right = new HashSet<char>();
-        for (int i = 0; i < thisLine.Length / 2; i++) {
-            left.Add(thisLine[i]);
-        }
-        for (int i = thisLine.Length / 2; i < thisLine.Length; i++) {
-            right.Add(thisLine[i]);
-        }
+        string[] split = thisLine.Trim().Split(",");
+        int firstMin = int.Parse(split[0].Substring(0, split[0].IndexOf("-")));
+        int firstMax = int.Parse(split[0].Substring(split[0].IndexOf("-") + 1));
+        int secondMin = int.Parse(split[1].Substring(0, split[1].IndexOf("-")));
+        int secondMax = int.Parse(split[1].Substring(split[1].IndexOf("-") + 1));
 
-        foreach (char c in left) {
-            if (right.Contains(c)) {
-                if (Char.IsLower(c)) result += c - 'a' + 1;
-                else result += c - 'A' + 27;
-                break;
-            }
+        if (firstMin >= secondMin && firstMax <= secondMax ||
+            secondMin >= firstMin && secondMax <= firstMax)
+        {
+            result++;
         }
     }
 }
