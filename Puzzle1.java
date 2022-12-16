@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashSet;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Puzzle1 {
 
@@ -14,23 +12,16 @@ public class Puzzle1 {
 
         while (in.hasNextLine()) {
             String lineTrimmed = in.nextLine().trim();
-            // Use a set for each compartment for all of that compartment's characters.
-            Set<Character> first = new HashSet<>();
-            Set<Character> second = new HashSet<>();
-            for (int i = 0; i < lineTrimmed.length() / 2; i++) {
-                first.add(lineTrimmed.charAt(i));
-            }
-            for (int i = lineTrimmed.length() /  2; i < lineTrimmed.length(); i++) {
-                second.add(lineTrimmed.charAt(i));
-            }
+            String[] lineSplit = lineTrimmed.split(",");
+            int firstMin, firstMax, secondMin, secondMax;
+            firstMin = Integer.parseInt(lineSplit[0].substring(0, lineSplit[0].indexOf("-")));
+            firstMax = Integer.parseInt(lineSplit[0].substring(lineSplit[0].indexOf("-") + 1));
+            secondMin = Integer.parseInt(lineSplit[1].substring(0, lineSplit[1].indexOf("-")));
+            secondMax = Integer.parseInt(lineSplit[1].substring(lineSplit[1].indexOf("-") + 1));
 
-            // Check if each character in the first set is in both sets.
-            // Add the priority of the character that is in both sets to result.
-            for (Character c : first) {
-                if (second.contains(c)) {
-                    if (Character.isLowerCase(c)) result += (int)(c - 'a' + 1);
-                    else result += (int)(c - 'A' + 27);
-                }
+            if (firstMin >= secondMin && firstMax <= secondMax ||
+                secondMin >= firstMin && secondMax <= firstMax) {
+                result++;
             }
         }
 
