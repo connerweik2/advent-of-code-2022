@@ -8,42 +8,24 @@ int main(void) {
 
     int result = 0;
 
-    string thisLine;
+    string line;
 
-    while (getline(inputFile, thisLine)) {
-        bool first[256];
-        bool second[256];
-        bool third[256];
+    while (getline(inputFile, line)) {
+        bool left[256];
+        bool right[256];
 
-        for (int i = 0; i < 256; i++) {
-            first[i] = false;
-            second[i] = false;
-            third[i] = false;
-        }
+        size_t comma_index = line.find(",");
+        string first = line.substr(0, comma_index);
+        string second = line.substr(comma_index + 1, line.length() - (comma_index + 1));
+        int firstHyphenIndex = first.find("-");
+        int secondHyphenIndex = second.find("-");
+        int firstMin = stoi(first.substr(0, firstHyphenIndex));
+        int firstMax = stoi(first.substr(firstHyphenIndex + 1, first.length() - (firstHyphenIndex + 1)));
+        int secondMin = stoi(second.substr(0, secondHyphenIndex));
+        int secondMax = stoi(second.substr(secondHyphenIndex + 1, second.length() - (secondHyphenIndex + 1)));
 
-        for (auto c : thisLine) {
-            first[c] = true;
-        }
-        getline(inputFile, thisLine);
-        for (auto c : thisLine) {
-            second[c] = true;
-        }
-        getline(inputFile, thisLine);
-        for (auto c : thisLine) {
-            third[c] = true;
-        }
-
-        for (int i = 0; i < 256; i++) {
-            if (first[i] && second[i] && third[i]) {
-                if (i >= 'a' && i <= 'z') {
-                    result += i - 'a' + 1;
-                    break;
-                }
-                else {
-                    result += i - 'A' + 27;
-                    break;
-                }
-            }
+        if (firstMin <= secondMax && firstMax >= secondMin) {
+            result++;
         }
     }
 

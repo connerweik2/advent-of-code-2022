@@ -8,35 +8,25 @@ int main(void) {
 
     int result = 0;
 
-    string thisLine;
+    string line;
 
-    while (getline(inputFile, thisLine)) {
+    while (getline(inputFile, line)) {
         bool left[256];
         bool right[256];
 
-        for (int i = 0; i < 256; i++) {
-            left[i] = false;
-            right[i] = false;
-        }
+        size_t comma_index = line.find(",");
+        string first = line.substr(0, comma_index);
+        string second = line.substr(comma_index + 1, line.length() - (comma_index + 1));
+        int firstHyphenIndex = first.find("-");
+        int secondHyphenIndex = second.find("-");
+        int firstMin = stoi(first.substr(0, firstHyphenIndex));
+        int firstMax = stoi(first.substr(firstHyphenIndex + 1, first.length() - (firstHyphenIndex + 1)));
+        int secondMin = stoi(second.substr(0, secondHyphenIndex));
+        int secondMax = stoi(second.substr(secondHyphenIndex + 1, second.length() - (secondHyphenIndex + 1)));
 
-        for (int i = 0; i < thisLine.length() / 2; i++) {
-            left[thisLine[i]] = true;
-        }
-        for (int i = thisLine.length() / 2; i < thisLine.length(); i++) {
-            right[thisLine[i]] = true;
-        }
-
-        for (int i = 0; i < 256; i++) {
-            if (left[i] && right[i]) {
-                if (i >= 'a' && i <= 'z') {
-                    result += i - 'a' + 1;
-                    break;
-                }
-                else {
-                    result += i - 'A' + 27;
-                    break;
-                }
-            }
+        if (firstMin >= secondMin && firstMax <= secondMax ||
+            secondMin >= firstMin && secondMax <= firstMax) {
+            result++;
         }
     }
 
