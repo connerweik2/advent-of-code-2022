@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
+	"strconv"
 )
 
 func main() {
@@ -15,39 +17,19 @@ func main() {
 	defer file.Close()
 
 	result := 0
+	re := regexp.MustCompile(",|-")
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		var first [256]bool
-		var second [256]bool
-		var third [256]bool
+		line := (scanner.Text())
+		split := re.Split(line, -1)
+		firstMin, _ := strconv.Atoi(split[0])
+		firstMax, _ := strconv.Atoi(split[1])
+		secondMin, _ := strconv.Atoi(split[2])
+		secondMax, _ := strconv.Atoi(split[3])
 
-		thisLine := scanner.Text()
-		for i := 0; i < len(thisLine); i++ {
-			first[thisLine[i]] = true
-		}
-
-		scanner.Scan()
-		thisLine = scanner.Text()
-		for i := 0; i < len(thisLine); i++ {
-			second[thisLine[i]] = true
-		}
-
-		scanner.Scan()
-		thisLine = scanner.Text()
-		for i := 0; i < len(thisLine); i++ {
-			third[thisLine[i]] = true
-		}
-
-		for i := 0; i < 256; i++ {
-			if first[i] && second[i] && third[i] {
-				if i >= 'a' && i <= 'z' {
-					result += int(i - 'a' + 1)
-				} else {
-					result += int(i - 'A' + 27)
-				}
-				break
-			}
+		if firstMin <= secondMax && firstMax >= secondMin {
+			result++
 		}
 	}
 
