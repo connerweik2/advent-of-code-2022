@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::collections::HashSet;
 
 fn main() {
     let input_file = File::open("./input.txt").expect("Failed to open input file");
@@ -9,30 +8,19 @@ fn main() {
 
     let lines = io::BufReader::new(input_file).lines();
     for line in lines {
-        let mut left = HashSet::new();
-        let mut right = HashSet::new();
         let line_unwrap = line.unwrap();
-        let line_bytes = line_unwrap.as_bytes();
+        let split = line_unwrap.split(",").collect::<Vec<&str>>();
+        let first_split = split[0].split("-").collect::<Vec<&str>>();
+        let second_split = split[1].split("-").collect::<Vec<&str>>();
+        let first_min = first_split[0].parse::<i32>().unwrap();
+        let first_max = first_split[1].parse::<i32>().unwrap();
+        let second_min = second_split[0].parse::<i32>().unwrap();
+        let second_max = second_split[1].parse::<i32>().unwrap();
 
-        for i in 0..line_bytes.len()/2 {
-            left.insert(line_bytes[i]);
+        if (first_min >= second_min && first_max <= second_max) ||
+           (second_min >= first_min && second_max <= first_max) {
+            result += 1;
         }
-        for i in line_bytes.len()/2..line_bytes.len() {
-            right.insert(line_bytes[i]);
-        }
-
-        for c in left {
-            if right.contains(&c) {
-                if c >= b'a' && c <= b'z' {
-                    result += (c - b'a' + 1) as i32;
-                } else {
-                    result += (c - b'A' + 27) as i32;
-                }
-
-                break;
-            }
-        }
-
     }
 
     println!("{result}");
