@@ -1,23 +1,55 @@
-int result = 0;
-
 using (StreamReader sr = File.OpenText("./input.txt"))
 {
-    string thisLine;
+    string line;
 
-    while ((thisLine = sr.ReadLine()) != null)
+    Stack<char>[] stacks = new Stack<char>[9];
+    for (int i = 0; i < 9; i++)
     {
-        string[] split = thisLine.Trim().Split(",");
-        int firstMin = int.Parse(split[0].Substring(0, split[0].IndexOf("-")));
-        int firstMax = int.Parse(split[0].Substring(split[0].IndexOf("-") + 1));
-        int secondMin = int.Parse(split[1].Substring(0, split[1].IndexOf("-")));
-        int secondMax = int.Parse(split[1].Substring(split[1].IndexOf("-") + 1));
+        stacks[i] = new Stack<char>();
+    }
 
-        if (firstMin >= secondMin && firstMax <= secondMax ||
-            secondMin >= firstMin && secondMax <= firstMax)
+    char[,] initialState = new char[8, 9];
+
+    for (int i = 0; i < 8; i++)
+    {
+        line = sr.ReadLine();
+        for (int j = 0; j < 9; j++)
         {
-            result++;
+            initialState[i,j] = line[j * 4 + 1];
         }
     }
-}
 
-Console.WriteLine(result);
+    for (int i = 7; i >= 0; i--)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            if (initialState[i,j] != ' ')
+            {
+                stacks[j].Push(initialState[i,j]);
+            }
+        }
+    }
+
+    sr.ReadLine();
+    sr.ReadLine();
+
+    while ((line = sr.ReadLine()) != null)
+    {
+        string[] split = line.Split(" ");
+
+        int moveCount = int.Parse(split[1]);
+        int stackFrom = int.Parse(split[3]) - 1;
+        int stackTo = int.Parse(split[5]) - 1;
+
+        for (int i = 0; i < moveCount; i++)
+        {
+            stacks[stackTo].Push(stacks[stackFrom].Pop());
+        }
+    }
+
+    for (int i = 0; i < 9; i++)
+    {
+        Console.Write(stacks[i].Pop());
+    }
+    Console.WriteLine();
+}
