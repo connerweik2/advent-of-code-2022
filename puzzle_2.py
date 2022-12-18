@@ -1,15 +1,35 @@
-result = 0
+from collections import deque
 
+
+lines = []
 with open('./input.txt', 'r') as f:
     for line in f:
-        line_processed = line.strip().split(',')
-        first_min = int(line_processed[0][0:line_processed[0].index('-')])
-        first_max = int(line_processed[0][line_processed[0].index('-')+1:])
-        second_min = int(line_processed[1][0:line_processed[1].index('-')])
-        second_max = int(line_processed[1][line_processed[1].index('-')+1:])
+        lines.append(line)
 
-        if first_min <= second_max and first_max >= second_min:
-           result += 1
+stacks = []
+for i in range(9):
+    stacks.append(deque())
 
-            
-print(result)
+for i in range(7, -1, -1):
+    for j in range(9):
+        if lines[i][j * 4 + 1] != ' ':
+            stacks[j].append(lines[i][j * 4 + 1])
+
+for i in range(10, len(lines)):
+    split = lines[i].split(' ')
+
+    num_moves = int(split[1])
+    stack_from = stacks[int(split[3]) - 1]
+    stack_to = stacks[int(split[5]) - 1]
+
+    temp_stack = deque()
+
+    for j in range(num_moves):
+        temp_stack.append(stack_from.pop())
+    
+    for j in range(num_moves):
+        stack_to.append(temp_stack.pop())
+
+for i in range(9):
+    print(stacks[i].pop(), end='')
+print()
