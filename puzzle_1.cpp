@@ -1,38 +1,62 @@
 #include <iostream>
 #include <fstream>
-#include <string.h>
+#include <stack>
 using namespace std;
 
 int main(void) {
-    ifstream inputFile("./input.txt");
-
-    int result = 0;
-
+    ifstream input_file("./input.txt");
+    
     string line;
 
-    while (getline(inputFile, line)) {
-        bool left[256];
-        bool right[256];
+    stack<char> stacks[9];
 
-        size_t comma_index = line.find(",");
-        string first = line.substr(0, comma_index);
-        string second = line.substr(comma_index + 1, line.length() - (comma_index + 1));
-        int firstHyphenIndex = first.find("-");
-        int secondHyphenIndex = second.find("-");
-        int firstMin = stoi(first.substr(0, firstHyphenIndex));
-        int firstMax = stoi(first.substr(firstHyphenIndex + 1, first.length() - (firstHyphenIndex + 1)));
-        int secondMin = stoi(second.substr(0, secondHyphenIndex));
-        int secondMax = stoi(second.substr(secondHyphenIndex + 1, second.length() - (secondHyphenIndex + 1)));
+    char initial_state[8][9];
 
-        if (firstMin >= secondMin && firstMax <= secondMax ||
-            secondMin >= firstMin && secondMax <= firstMax) {
-            result++;
+    for (int i = 0; i < 8; i++) {
+        getline(input_file, line);
+        for (int j = 0; j < 9; j++) {
+            initial_state[i][j] = line[j * 4 + 1];
         }
     }
 
-    inputFile.close();
+    for (int i = 7; i >= 0; i--) {
+        for (int j = 0; j < 9; j++) {
+            if (initial_state[i][j] != ' ') {
+                stacks[j].push(initial_state[i][j]);
+            }
+        }
+    }
 
-    cout << result << endl;
+    getline(input_file, line);
+    getline(input_file, line);
+    
+    while (getline(input_file, line)) {
+        int last_find_index = line.find(" ");
+
+        int num_moves = stoi(line.substr(last_find_index + 1, line.find(" ", last_find_index + 1) - last_find_index));
+
+        last_find_index = line.find(' ', last_find_index + 1);
+        last_find_index = line.find(' ', last_find_index + 1);
+
+        int stack_from = stoi(line.substr(last_find_index + 1, line.find(" ", last_find_index + 1) - last_find_index)) - 1;
+
+        last_find_index = line.find(' ', last_find_index + 1);
+        last_find_index = line.find(' ', last_find_index + 1);
+
+        int stack_to = stoi(line.substr(last_find_index + 1, line.find(" ", last_find_index + 1) - last_find_index)) - 1;
+
+        for (int i = 0; i < num_moves; i++) {
+            stacks[stack_to].push(stacks[stack_from].top());
+            stacks[stack_from].pop();
+        }
+    }
+
+    for (int i = 0; i < 9; i++) {
+        cout << stacks[i].top();
+    }
+    cout << endl;
+
+    input_file.close();
 
     return 0;
 }
