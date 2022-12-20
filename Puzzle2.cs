@@ -1,61 +1,35 @@
 ﻿using (StreamReader sr = File.OpenText("./input.txt"))
 {
-    string line;
+    string input = sr.ReadLine();
 
-    Stack<char>[] stacks = new Stack<char>[9];
-    for (int i = 0; i < 9; i++)
+    int[] freq = new int[256];
+
+    for (int i = 0; i < 13; i++)
     {
-        stacks[i] = new Stack<char>();
+        freq[input[i]]++;
     }
 
-    char[,] initialState = new char[8, 9];
-
-    for (int i = 0; i < 8; i++)
+    for (int i = 13; i < input.Length; i++)
     {
-        line = sr.ReadLine();
-        for (int j = 0; j < 9; j++)
-        {
-            initialState[i,j] = line[j * 4 + 1];
-        }
-    }
+        freq[input[i]]++;
+        
+        bool allUnique = true;
 
-    for (int i = 7; i >= 0; i--)
-    {
-        for (int j = 0; j < 9; j++)
+        for (int j = 0; j < 256; j++)
         {
-            if (initialState[i,j] != ' ')
+            if (freq[j] > 1)
             {
-                stacks[j].Push(initialState[i,j]);
+                allUnique = false;
+                break;
             }
         }
-    }
 
-    sr.ReadLine();
-    sr.ReadLine();
-
-    while ((line = sr.ReadLine()) != null)
-    {
-        string[] split = line.Split(" ");
-
-        int moveCount = int.Parse(split[1]);
-        int stackFrom = int.Parse(split[3]) - 1;
-        int stackTo = int.Parse(split[5]) - 1;
-
-        Stack<char> tempStack = new Stack<char>();
-
-        for (int i = 0; i < moveCount; i++)
+        if (allUnique)
         {
-            tempStack.Push(stacks[stackFrom].Pop());
+            Console.WriteLine(i + 1);
+            break;
         }
-        for (int i = 0; i < moveCount; i++)
-        {
-            stacks[stackTo].Push(tempStack.Pop());
-        }
-    }
 
-    for (int i = 0; i < 9; i++)
-    {
-        Console.Write(stacks[i].Pop());
+        freq[input[i - 13]]--;
     }
-    Console.WriteLine();
 }
