@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import java.util.Stack;
 
 public class Puzzle1 {
 
@@ -9,45 +8,26 @@ public class Puzzle1 {
         File inputFile = new File("./input.txt");
         Scanner in = new Scanner(inputFile);
 
-        Stack<Character>[] stacks = new Stack[9];
-        for (int i = 0; i < 9; i++) {
-            stacks[i] = new Stack<>();
+        char[] input = in.next().toCharArray();
+
+        int[] freq = new int[256];
+
+        for (int i = 0; i < 3; i++) {
+            freq[input[i]]++;
         }
-        char[][] initialStacks = new char[8][9];
-        for (int i = 0; i < 8; i++) {
-            String line = in.nextLine();
-            for (int j = 0; j < 9; j++) {
-                initialStacks[i][j] = line.charAt(j * 4 + 1);
+        for (int i = 3; i < input.length; i++) {
+            freq[input[i]]++;
+            boolean allUnique = true;
+            for (int j = 0; j < 256; j++) {
+                if (freq[j] > 1) allUnique = false;
             }
-        }
-
-        for (int i = 7; i >= 0; i--) {
-            for (int j = 0; j < 9; j++) {
-                if (initialStacks[i][j] != ' ') {
-                    stacks[j].push(initialStacks[i][j]);
-                }
+            if (allUnique) {
+                System.out.println(i+1);
+                break;
             }
+            freq[input[i-3]]--;
         }
-
-        in.nextLine();
-        in.nextLine();
-
-        while (in.hasNextLine()) {
-            String[] split = in.nextLine().split(" ");
-            int moveCount = Integer.parseInt(split[1]);
-            int stackFrom = Integer.parseInt(split[3]) - 1;
-            int stackTo = Integer.parseInt(split[5]) - 1;
-            for (int i = 0; i < moveCount; i++) {
-                stacks[stackTo].push(stacks[stackFrom].pop());
-            }
-        }
-
         
         in.close();
-        
-        for (int i = 0; i < 9; i++) {
-            System.out.print(stacks[i].pop());
-        }
-        System.out.println();
     }
 }
