@@ -1,30 +1,20 @@
-from collections import deque
+input_string = None
 
-
-lines = []
 with open('./input.txt', 'r') as f:
-    for line in f:
-        lines.append(line)
+    input_string = [ord(c) for c in f.readline()]
 
-stacks = []
-for i in range(9):
-    stacks.append(deque())
+freq = [0] * 256
 
-for i in range(7, -1, -1):
-    for j in range(9):
-        if lines[i][j * 4 + 1] != ' ':
-            stacks[j].append(lines[i][j * 4 + 1])
+for i in range(3):
+    freq[input_string[i]] += 1
 
-for i in range(10, len(lines)):
-    split = lines[i].split(' ')
-
-    num_moves = int(split[1])
-    stack_from = stacks[int(split[3]) - 1]
-    stack_to = stacks[int(split[5]) - 1]
-    
-    for j in range(num_moves):
-        stack_to.append(stack_from.pop())
-
-for i in range(9):
-    print(stacks[i].pop(), end='')
-print()
+for i in range(3, len(input_string)):
+    freq[input_string[i]] += 1
+    all_unique = True
+    for j in range(256):
+        if freq[j] > 1:
+            all_unique = False
+    if all_unique:
+        print(i + 1)
+        break
+    freq[input_string[i - 3]] -= 1
