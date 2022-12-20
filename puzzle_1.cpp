@@ -7,56 +7,37 @@ int main(void) {
     ifstream input_file("./input.txt");
     
     string line;
+    getline(input_file, line);
+    input_file.close();
 
-    stack<char> stacks[9];
-
-    char initial_state[8][9];
-
-    for (int i = 0; i < 8; i++) {
-        getline(input_file, line);
-        for (int j = 0; j < 9; j++) {
-            initial_state[i][j] = line[j * 4 + 1];
-        }
+    int freq[256];
+    for (int i = 0; i < 256; i++) {
+        freq[i] = 0;
     }
 
-    for (int i = 7; i >= 0; i--) {
-        for (int j = 0; j < 9; j++) {
-            if (initial_state[i][j] != ' ') {
-                stacks[j].push(initial_state[i][j]);
+    for (int i = 0; i < 3; i++) {
+        freq[line[i]]++;
+    }
+
+    for (int i = 3; i < line.length(); i++) {
+        freq[line[i]]++;
+
+        bool all_unique = true;
+
+        for (int j = 0; j < 256; j++) {
+            if (freq[j] > 1) {
+                all_unique = false;
+                break;
             }
         }
-    }
 
-    getline(input_file, line);
-    getline(input_file, line);
-    
-    while (getline(input_file, line)) {
-        int last_find_index = line.find(" ");
-
-        int num_moves = stoi(line.substr(last_find_index + 1, line.find(" ", last_find_index + 1) - last_find_index));
-
-        last_find_index = line.find(' ', last_find_index + 1);
-        last_find_index = line.find(' ', last_find_index + 1);
-
-        int stack_from = stoi(line.substr(last_find_index + 1, line.find(" ", last_find_index + 1) - last_find_index)) - 1;
-
-        last_find_index = line.find(' ', last_find_index + 1);
-        last_find_index = line.find(' ', last_find_index + 1);
-
-        int stack_to = stoi(line.substr(last_find_index + 1, line.find(" ", last_find_index + 1) - last_find_index)) - 1;
-
-        for (int i = 0; i < num_moves; i++) {
-            stacks[stack_to].push(stacks[stack_from].top());
-            stacks[stack_from].pop();
+        if (all_unique) {
+            cout << i + 1 << endl;
+            break;
         }
-    }
 
-    for (int i = 0; i < 9; i++) {
-        cout << stacks[i].top();
+        freq[line[i - 3]]--;
     }
-    cout << endl;
-
-    input_file.close();
 
     return 0;
 }
