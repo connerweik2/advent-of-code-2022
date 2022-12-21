@@ -4,17 +4,17 @@ use std::io::{self, BufRead};
 fn main() {
     let input_file = File::open("./input.txt").expect("Failed to open input file");
 
-    let _input = io::BufReader::new(input_file).lines().next().unwrap().unwrap();
-    let input = _input.as_bytes();
+    let line = io::BufReader::new(input_file).lines().next().unwrap().unwrap();
+    let line_bytes = line.as_bytes();
 
     let mut freq = [0; 500];
 
     for i in 0..3 {
-        freq[input[i as usize] as usize] += 1;
+        freq[line_bytes[i as usize] as usize] += 1;
     }
 
-    for i in 3..input.len() {
-        freq[input[i as usize] as usize] += 1;
+    for i in 3..line_bytes.len() {
+        freq[line_bytes[i as usize] as usize] += 1;
 
         let mut all_unique = true;
 
@@ -30,6 +30,6 @@ fn main() {
             break;
         }
 
-        freq[input[(i - 3) as usize] as usize] -= 1
+        freq[line_bytes[(i - 3) as usize] as usize] -= 1
     }
 }
