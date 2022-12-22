@@ -1,33 +1,93 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Puzzle1 {
+
+    private static int result;
+
+    static class Node {
+        Node parent;
+        boolean isFile;
+        int size;
+        Map<String, Node> children;
+
+        public Node(Node parent, boolean isFile, int size) {
+            this.parent = parent;
+            this.isFile = isFile;
+            this.size = size;
+            this.children = new HashMap<>();
+        }
+    }
+
+    public static int go(Node root) {
+        int size = 0;
+        for (String key : root.children.keySet()) {
+            Node child = root.children.get(key);
+            size += child.isFile ? child.size : go(child);
+        }
+        if (size <= 100000) {
+            result += size;
+        }
+
+        return size;
+    }
 
     public static void main(String[] args) throws FileNotFoundException {
         File inputFile = new File("./input.txt");
         Scanner in = new Scanner(inputFile);
 
-        char[] input = in.next().toCharArray();
+        result = 0;
 
-        int[] freq = new int[256];
+        Node root = new Node(null, false, 0);
+        Node currentNode = root;
 
-        for (int i = 0; i < 3; i++) {
-            freq[input[i]]++;
-        }
-        for (int i = 3; i < input.length; i++) {
-            freq[input[i]]++;
-            boolean allUnique = true;
-            for (int j = 0; j < 256; j++) {
-                if (freq[j] > 1) allUnique = false;
+        in.next();
+        in.next();
+        in.next();
+
+        String next = in.next();
+
+        while (in.hasNext()) {
+            if (next.equals("$")) {
+                next = in.next();
             }
-            if (allUnique) {
-                System.out.println(i+1);
-                break;
+
+            if (next.equals("ls")) {
+                next  = in.next();
+                if (next.equals("$")) {
+                    continue;
+                }
+                do {
+                    String first = next;
+                    String second = in.next();
+
+                    if (first.equals("dir")) {
+                        currentNode.children.put(second, new Node(currentNode, false, -1));
+                    } else {
+                        currentNode.children.put(second, new Node(currentNode, true, Integer.parseInt(first)));
+                    }
+
+                    if (in.hasNext()) next  = in.next();
+                } while (in.hasNext() && !next.equals("$"));
+            } else {
+                String dirToCdTo = in.next();
+                if (dirToCdTo.equals("..")) {
+                    currentNode = currentNode.parent;
+                } else {
+                    currentNode = currentNode.children.get(dirToCdTo);
+                }
+
+                if (in.hasNext()) next  = in.next();
             }
-            freq[input[i-3]]--;
         }
-        
+
         in.close();
+
+        go(root);
+
+        System.out.println(result);
     }
 }
