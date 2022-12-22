@@ -10,13 +10,13 @@ public class Puzzle1 {
 
     static class Node {
         Node parent;
-        boolean isFile;
+        boolean isDir;
         int size;
         Map<String, Node> children;
 
-        public Node(Node parent, boolean isFile, int size) {
+        public Node(Node parent, boolean isDir, int size) {
             this.parent = parent;
-            this.isFile = isFile;
+            this.isDir = isDir;
             this.size = size;
             this.children = new HashMap<>();
         }
@@ -26,7 +26,7 @@ public class Puzzle1 {
         int size = 0;
         for (String key : root.children.keySet()) {
             Node child = root.children.get(key);
-            size += child.isFile ? child.size : go(child);
+            size += child.isDir ? go(child) : child.size;
         }
         if (size <= 100000) {
             result += size;
@@ -65,9 +65,9 @@ public class Puzzle1 {
                     String second = in.next();
 
                     if (first.equals("dir")) {
-                        currentNode.children.put(second, new Node(currentNode, false, -1));
+                        currentNode.children.put(second, new Node(currentNode, true, -1));
                     } else {
-                        currentNode.children.put(second, new Node(currentNode, true, Integer.parseInt(first)));
+                        currentNode.children.put(second, new Node(currentNode, false, Integer.parseInt(first)));
                     }
 
                     if (in.hasNext()) next  = in.next();

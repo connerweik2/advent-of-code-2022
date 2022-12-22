@@ -7,13 +7,13 @@ import java.util.Scanner;
 public class Puzzle2 {
     static class Node {
         Node parent;
-        boolean isFile;
+        boolean isDir;
         int size;
         Map<String, Node> children;
 
-        public Node(Node parent, boolean isFile, int size) {
+        public Node(Node parent, boolean isDir, int size) {
             this.parent = parent;
-            this.isFile = isFile;
+            this.isDir = isDir;
             this.size = size;
             this.children = new HashMap<>();
         }
@@ -23,7 +23,7 @@ public class Puzzle2 {
         int size = 0;
         for (String key : root.children.keySet()) {
             Node child = root.children.get(key);
-            size += child.isFile ? child.size : go(child);
+            size += child.isDir ? go(child) : child.size;
         }
 
         root.size = size;
@@ -32,7 +32,7 @@ public class Puzzle2 {
     }
 
     public static int go2(Node root, int threshold) {
-        if (root.isFile) {
+        if (!root.isDir) {
             return root.size >= threshold ? root.size : Integer.MAX_VALUE;
         }
         int retval = root.size >= threshold ? root.size : Integer.MAX_VALUE;
@@ -47,7 +47,7 @@ public class Puzzle2 {
         File inputFile = new File("./input.txt");
         Scanner in = new Scanner(inputFile);
 
-        Node root = new Node(null, false, 0);
+        Node root = new Node(null, true, 0);
         Node currentNode = root;
 
         in.next();
@@ -71,9 +71,9 @@ public class Puzzle2 {
                     String second = in.next();
 
                     if (first.equals("dir")) {
-                        currentNode.children.put(second, new Node(currentNode, false, -1));
+                        currentNode.children.put(second, new Node(currentNode, true, -1));
                     } else {
-                        currentNode.children.put(second, new Node(currentNode, true, Integer.parseInt(first)));
+                        currentNode.children.put(second, new Node(currentNode, false, Integer.parseInt(first)));
                     }
 
                     if (in.hasNext()) next  = in.next();
