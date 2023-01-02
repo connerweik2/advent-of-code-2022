@@ -73,7 +73,7 @@ func main() {
 
 	var dirSizes []int
 
-	SetDirSizes(root, &dirSizes)
+	setDirSizes(root, &dirSizes)
 
 	result := math.MaxInt
 
@@ -99,7 +99,7 @@ func setDirSizes(root *Node, dirSizes *[]int) int {
 	}
 	size := 0
 	for _, child := range root.children {
-		size += SetDirSizes(child, dirSizes)
+		size += setDirSizes(child, dirSizes)
 	}
 	root.size = size
 	*dirSizes = append(*dirSizes, size)
