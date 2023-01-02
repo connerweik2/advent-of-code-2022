@@ -1,92 +1,63 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Puzzle1 {
-
-    private static int result;
-
-    static class Node {
-        Node parent;
-        boolean isDir;
-        int size;
-        Map<String, Node> children;
-
-        public Node(Node parent, boolean isDir, int size) {
-            this.parent = parent;
-            this.isDir = isDir;
-            this.size = size;
-            this.children = new HashMap<>();
+    public static boolean visible(int targetRow, int targetCol, int[][] grid) {
+        boolean visibleUp = true, visibleDown = true, visibleLeft = true, visibleRight = true;
+        for (int row = targetRow - 1; row >= 0; row--) {
+            if (grid[row][targetCol] >= grid[targetRow][targetCol]) {
+                visibleUp = false;
+            }
         }
-    }
-
-    public static int go(Node root) {
-        int size = 0;
-        for (String key : root.children.keySet()) {
-            Node child = root.children.get(key);
-            size += child.isDir ? go(child) : child.size;
+        for (int row = targetRow + 1; row < grid.length; row++) {
+            if (grid[row][targetCol] >= grid[targetRow][targetCol]) {
+                visibleDown = false;
+            }
         }
-        if (size <= 100000) {
-            result += size;
+        for (int col = targetCol - 1; col >= 0; col--) {
+            if (grid[targetRow][col] >= grid[targetRow][targetCol]) {
+                visibleLeft = false;
+            }
         }
-
-        return size;
+        for (int col = targetCol + 1; col < grid[0].length; col++) {
+            if (grid[targetRow][col] >= grid[targetRow][targetCol]) {
+                visibleRight = false;
+            }
+        }
+        return visibleUp || visibleDown || visibleLeft || visibleRight;
     }
 
     public static void main(String[] args) throws FileNotFoundException {
+        ArrayList<String> lines = new ArrayList<>();
+
         File inputFile = new File("./input.txt");
         Scanner in = new Scanner(inputFile);
 
-        result = 0;
-
-        Node root = new Node(null, false, 0);
-        Node currentNode = root;
-
-        in.next();
-        in.next();
-        in.next();
-
-        String next = in.next();
-
         while (in.hasNext()) {
-            if (next.equals("$")) {
-                next = in.next();
-            }
-
-            if (next.equals("ls")) {
-                next  = in.next();
-                if (next.equals("$")) {
-                    continue;
-                }
-                do {
-                    String first = next;
-                    String second = in.next();
-
-                    if (first.equals("dir")) {
-                        currentNode.children.put(second, new Node(currentNode, true, -1));
-                    } else {
-                        currentNode.children.put(second, new Node(currentNode, false, Integer.parseInt(first)));
-                    }
-
-                    if (in.hasNext()) next  = in.next();
-                } while (in.hasNext() && !next.equals("$"));
-            } else {
-                String dirToCdTo = in.next();
-                if (dirToCdTo.equals("..")) {
-                    currentNode = currentNode.parent;
-                } else {
-                    currentNode = currentNode.children.get(dirToCdTo);
-                }
-
-                if (in.hasNext()) next  = in.next();
-            }
+            lines.add(in.next());
         }
 
         in.close();
 
-        go(root);
+        int[][] grid = new int[lines.size()][lines.get(0).length()];
+
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid[0].length; col++) {
+                grid[row][col] = (int)(lines.get(row).charAt(col) - '0');
+            }
+        }
+
+        int result = 0;
+
+        for (int targetRow = 0 ; targetRow < grid.length; targetRow++) {
+            for (int targetCol = 0; targetCol < grid[0].length; targetCol++) {
+                if (visible(targetRow, targetCol, grid)) {
+                    result++;
+                }
+            }
+        }
 
         System.out.println(result);
     }

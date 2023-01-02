@@ -1,104 +1,69 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Puzzle2 {
-    static class Node {
-        Node parent;
-        boolean isDir;
-        int size;
-        Map<String, Node> children;
-
-        public Node(Node parent, boolean isDir, int size) {
-            this.parent = parent;
-            this.isDir = isDir;
-            this.size = size;
-            this.children = new HashMap<>();
+    public static int scenicScore(int targetRow, int targetCol, int[][] grid) {
+        int distanceUp = 0, distanceDown = 0, distanceLeft = 0, distanceRight = 0;
+        for (int row = targetRow - 1; row >= 0; row--) {
+            distanceUp++;
+            if (grid[row][targetCol] >= grid[targetRow][targetCol]) {
+                break;
+            }
         }
-    }
-
-    public static int go(Node root) {
-        int size = 0;
-        for (String key : root.children.keySet()) {
-            Node child = root.children.get(key);
-            size += child.isDir ? go(child) : child.size;
+        for (int row = targetRow + 1; row < grid.length; row++) {
+            distanceDown++;
+            if (grid[row][targetCol] >= grid[targetRow][targetCol]) {
+                break;
+            }
         }
-
-        root.size = size;
-
-        return size;
-    }
-
-    public static int go2(Node root, int threshold) {
-        if (!root.isDir) {
-            return root.size >= threshold ? root.size : Integer.MAX_VALUE;
+        for (int col = targetCol - 1; col >= 0; col--) {
+            distanceLeft++;
+            if (grid[targetRow][col] >= grid[targetRow][targetCol]) {
+                break;
+            }
         }
-        int retval = root.size >= threshold ? root.size : Integer.MAX_VALUE;
-        for (Node child : root.children.values()) {
-            retval = Math.min(retval, go2(child, threshold));
+        for (int col = targetCol + 1; col < grid[0].length; col++) {
+            distanceRight++;
+            if (grid[targetRow][col] >= grid[targetRow][targetCol]) {
+                break;
+            }
         }
-
-        return retval;
+        return distanceUp * distanceDown * distanceLeft * distanceRight;
     }
 
     public static void main(String[] args) throws FileNotFoundException {
+        ArrayList<String> lines = new ArrayList<>();
+
         File inputFile = new File("./input.txt");
         Scanner in = new Scanner(inputFile);
 
-        Node root = new Node(null, true, 0);
-        Node currentNode = root;
-
-        in.next();
-        in.next();
-        in.next();
-
-        String next = in.next();
-
         while (in.hasNext()) {
-            if (next.equals("$")) {
-                next = in.next();
-            }
-
-            if (next.equals("ls")) {
-                next  = in.next();
-                if (next.equals("$")) {
-                    continue;
-                }
-                do {
-                    String first = next;
-                    String second = in.next();
-
-                    if (first.equals("dir")) {
-                        currentNode.children.put(second, new Node(currentNode, true, -1));
-                    } else {
-                        currentNode.children.put(second, new Node(currentNode, false, Integer.parseInt(first)));
-                    }
-
-                    if (in.hasNext()) next  = in.next();
-                } while (in.hasNext() && !next.equals("$"));
-            } else {
-                String dirToCdTo = in.next();
-                if (dirToCdTo.equals("..")) {
-                    currentNode = currentNode.parent;
-                } else {
-                    currentNode = currentNode.children.get(dirToCdTo);
-                }
-
-                if (in.hasNext()) next  = in.next();
-            }
+            lines.add(in.next());
         }
 
         in.close();
 
-        go(root);
+        int[][] grid = new int[lines.size()][lines.get(0).length()];
 
-        int spaceTotal = 70000000;
-        int spaceTaken = root.size;
-        int spaceRequiredForUpdate = 30000000;
-        int threshold = Math.max(0, spaceRequiredForUpdate - (spaceTotal - spaceTaken));
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid[0].length; col++) {
+                grid[row][col] = (int)(lines.get(row).charAt(col) - '0');
+            }
+        }
 
-        System.out.println(go2(root, threshold));
+        int result = 0;
+
+        for (int targetRow = 0 ; targetRow < grid.length; targetRow++) {
+            for (int targetCol = 0; targetCol < grid[0].length; targetCol++) {
+                int score = scenicScore(targetRow, targetCol, grid);
+                if (score > result) {
+                    result = score;
+                }
+            }
+        }
+
+        System.out.println(result);
     }
 }
