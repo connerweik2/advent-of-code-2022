@@ -1,53 +1,36 @@
-class Node:
-    def __init__(self, parent, is_dir, size):
-        self.parent = parent
-        self.is_dir = is_dir
-        self.size = size
-        self.children = {}
-
 lines = []
 
 with open('./input.txt', 'r') as f:
-    lines = f.readlines()
+    lines = [line.strip() for line in f.readlines()]
 
-lines = [line.strip() for line in lines]
+grid = [[ord(c) - ord('0') for c in line] for line in lines]
 
-root = Node(None, True, 0)
-current_node = root
+def scenic_score(target_row, target_col):
+    distance_up, distance_down, distance_left, distance_right = 0, 0, 0, 0
+    for row in range(target_row - 1, -1, -1):
+        distance_up += 1
+        if grid[row][target_col] >= grid[target_row][target_col]:
+            break
+    for row in range(target_row + 1, len(grid)):
+        distance_down += 1
+        if grid[row][target_col] >= grid[target_row][target_col]:
+            break
+    for col in range(target_col - 1, -1, -1):
+        distance_left += 1
+        if grid[target_row][col] >= grid[target_row][target_col]:
+            break
+    for col in range(target_col + 1, len(grid[0])):
+        distance_right += 1
+        if grid[target_row][col] >= grid[target_row][target_col]:
+            break
+    return distance_up * distance_down * distance_left * distance_right
 
-i = 1
-while i < len(lines):
-    split = lines[i].split(' ')
-    i += 1
-    if i == len(lines):
-        break
-    if split[1] == 'ls':
-        while i < len(lines) and '$' not in lines[i]:
-            split = lines[i].split(' ')
-            if split[0] == 'dir':
-                current_node.children[split[1]] = Node(current_node, True, 0)
-            else:
-                current_node.children[split[1]] = Node(current_node, False, int(split[0]))
-            i += 1
-    elif split[1] == 'cd':
-        if split[2] == '..':
-            current_node = current_node.parent
-        else:
-            current_node = current_node.children[split[2]]
+result = 0
 
-dir_sizes = []
-
-def set_dir_sizes(root):
-    if not root.is_dir:
-        return root.size
-    root.size = sum([set_dir_sizes(child) for child in root.children.values()])
-    dir_sizes.append(root.size)
-    return root.size
-
-set_dir_sizes(root)
-
-total_space = 70000000
-unused_space_requirement = 30000000
-threshold = max(0, unused_space_requirement - (total_space - root.size))
-
-print(min([dir_size for dir_size in dir_sizes if dir_size >= threshold]))
+for row in range(len(grid)):
+    for col in range(len(grid[0])):
+        score = scenic_score(row, col)
+        if score > result:
+            result = score
+            
+print(result)
