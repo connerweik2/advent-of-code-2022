@@ -93,7 +93,7 @@ func main() {
 	fmt.Println(result)
 }
 
-func SetDirSizes(root *Node, dirSizes *[]int) int {
+func setDirSizes(root *Node, dirSizes *[]int) int {
 	if !root.isDir {
 		return root.size
 	}
