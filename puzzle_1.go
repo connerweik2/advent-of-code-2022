@@ -72,7 +72,7 @@ func main() {
 
 	var dirSizes []int
 
-	setDirSizes(root, &dirSizes)
+	SetDirSizes(root, &dirSizes)
 
 	result := 0
 
@@ -85,13 +85,13 @@ func main() {
 	fmt.Println(result)
 }
 
-func setDirSizes(root *Node, dirSizes *[]int) int {
+func SetDirSizes(root *Node, dirSizes *[]int) int {
 	if !root.isDir {
 		return root.size
 	}
 	size := 0
 	for _, child := range root.children {
-		size += setDirSizes(child, dirSizes)
+		size += SetDirSizes(child, dirSizes)
 	}
 	root.size = size
 	*dirSizes = append(*dirSizes, size)
