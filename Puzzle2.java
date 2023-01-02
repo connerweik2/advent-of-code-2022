@@ -55,9 +55,9 @@ public class Puzzle2 {
 
         int result = 0;
 
-        for (int targetRow = 0 ; targetRow < grid.length; targetRow++) {
-            for (int targetCol = 0; targetCol < grid[0].length; targetCol++) {
-                int score = scenicScore(targetRow, targetCol, grid);
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid[0].length; col++) {
+                int score = scenicScore(row, col, grid);
                 if (score > result) {
                     result = score;
                 }
