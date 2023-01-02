@@ -5,9 +5,25 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 )
 
+type Node struct {
+	parent   *Node
+	isDir    bool
+	size     int
+	children map[string]*Node
+}
+
+func NewNode(parent *Node, isDir bool, size int) *Node {
+	n := Node{parent, isDir, size, make(map[string]*Node)}
+	return &n
+}
+
 func main() {
+	var lines []string
+
 	file, err := os.Open("./input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -15,36 +31,69 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	scanner.Scan()
-	text := scanner.Text()
 
-	var freq [256]int
-
-	for i := 0; i < 3; i++ {
-		freq[text[i]]++
-	}
-
-	for i := 3; i < len(text); i++ {
-		freq[text[i]]++
-
-		allUnique := true
-
-		for j := 0; j < 256; j++ {
-			if freq[j] > 1 {
-				allUnique = false
-				break
-			}
-		}
-
-		if allUnique {
-			fmt.Println(i + 1)
-			break
-		}
-
-		freq[text[i-3]]--
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
 	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	root := &Node{nil, true, 0, make(map[string]*Node)}
+	currentNode := root
+
+	i := 1
+	for i < len(lines) {
+		split := strings.Split(strings.TrimSpace(lines[i]), " ")
+		i++
+		if i == len(lines) {
+			break
+		}
+		if split[1] == "ls" {
+			for i < len(lines) && !strings.Contains(lines[i], "$") {
+				split = strings.Split(lines[i], " ")
+				if split[0] == "dir" {
+					currentNode.children[split[1]] = NewNode(currentNode, true, 0)
+				} else {
+					size, _ := strconv.Atoi(split[0])
+					currentNode.children[split[1]] = NewNode(currentNode, false, size)
+				}
+				i++
+			}
+		} else {
+			if split[2] == ".." {
+				currentNode = currentNode.parent
+			} else {
+				currentNode = currentNode.children[split[2]]
+			}
+		}
+	}
+
+	var dirSizes []int
+
+	SetDirSizes(root, &dirSizes)
+
+	result := 0
+
+	for _, dirSize := range dirSizes {
+		if dirSize <= 100000 {
+			result += dirSize
+		}
+	}
+
+	fmt.Println(result)
+}
+
+func SetDirSizes(root *Node, dirSizes *[]int) int {
+	if !root.isDir {
+		return root.size
+	}
+	size := 0
+	for _, child := range root.children {
+		size += SetDirSizes(child, dirSizes)
+	}
+	root.size = size
+	*dirSizes = append(*dirSizes, size)
+	return size
 }
