@@ -5,21 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 )
-
-type Node struct {
-	parent   *Node
-	isDir    bool
-	size     int
-	children map[string]*Node
-}
-
-func NewNode(parent *Node, isDir bool, size int) *Node {
-	n := Node{parent, isDir, size, make(map[string]*Node)}
-	return &n
-}
 
 func main() {
 	var lines []string
@@ -33,67 +20,64 @@ func main() {
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		lines = append(lines, strings.TrimSpace(scanner.Text()))
 	}
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	var grid [][]int
 
-	root := &Node{nil, true, 0, make(map[string]*Node)}
-	currentNode := root
-
-	i := 1
-	for i < len(lines) {
-		split := strings.Split(strings.TrimSpace(lines[i]), " ")
-		i++
-		if i == len(lines) {
-			break
+	for _, line := range lines {
+		var thisRow []int
+		for i, _ := range line {
+			thisRow = append(thisRow, int(line[i]-'0'))
 		}
-		if split[1] == "ls" {
-			for i < len(lines) && !strings.Contains(lines[i], "$") {
-				split = strings.Split(lines[i], " ")
-				if split[0] == "dir" {
-					currentNode.children[split[1]] = NewNode(currentNode, true, 0)
-				} else {
-					size, _ := strconv.Atoi(split[0])
-					currentNode.children[split[1]] = NewNode(currentNode, false, size)
-				}
-				i++
-			}
-		} else {
-			if split[2] == ".." {
-				currentNode = currentNode.parent
-			} else {
-				currentNode = currentNode.children[split[2]]
-			}
-		}
+		grid = append(grid, thisRow)
 	}
-
-	var dirSizes []int
-
-	setDirSizes(root, &dirSizes)
 
 	result := 0
 
-	for _, dirSize := range dirSizes {
-		if dirSize <= 100000 {
-			result += dirSize
+	for targetRow := 0; targetRow < len(grid); targetRow++ {
+		for targetCol := 0; targetCol < len(grid[0]); targetCol++ {
+			if visible(targetRow, targetCol, grid) {
+				result++
+			}
 		}
 	}
 
 	fmt.Println(result)
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
 }
 
-func setDirSizes(root *Node, dirSizes *[]int) int {
-	if !root.isDir {
-		return root.size
+func visible(targetRow int, targetCol int, grid [][]int) bool {
+	visibleUp := true
+	visibleDown := true
+	visibleLeft := true
+	visibleRight := true
+	for row := 0; row < targetRow; row++ {
+		if grid[row][targetCol] >= grid[targetRow][targetCol] {
+			visibleUp = false
+			break
+		}
 	}
-	size := 0
-	for _, child := range root.children {
-		size += setDirSizes(child, dirSizes)
+	for row := targetRow + 1; row < len(grid); row++ {
+		if grid[row][targetCol] >= grid[targetRow][targetCol] {
+			visibleDown = false
+			break
+		}
 	}
-	root.size = size
-	*dirSizes = append(*dirSizes, size)
-	return size
+	for col := 0; col < targetCol; col++ {
+		if grid[targetRow][col] >= grid[targetRow][targetCol] {
+			visibleLeft = false
+			break
+		}
+	}
+	for col := targetCol + 1; col < len(grid[0]); col++ {
+		if grid[targetRow][col] >= grid[targetRow][targetCol] {
+			visibleRight = false
+			break
+		}
+	}
+	return visibleUp || visibleDown || visibleLeft || visibleRight
 }

@@ -4,23 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"math"
 	"os"
-	"strconv"
 	"strings"
 )
-
-type Node struct {
-	parent   *Node
-	isDir    bool
-	size     int
-	children map[string]*Node
-}
-
-func NewNode(parent *Node, isDir bool, size int) *Node {
-	n := Node{parent, isDir, size, make(map[string]*Node)}
-	return &n
-}
 
 func main() {
 	var lines []string
@@ -34,74 +20,65 @@ func main() {
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		lines = append(lines, strings.TrimSpace(scanner.Text()))
 	}
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	var grid [][]int
 
-	root := &Node{nil, true, 0, make(map[string]*Node)}
-	currentNode := root
-
-	i := 1
-	for i < len(lines) {
-		split := strings.Split(strings.TrimSpace(lines[i]), " ")
-		i++
-		if i == len(lines) {
-			break
+	for _, line := range lines {
+		var thisRow []int
+		for i, _ := range line {
+			thisRow = append(thisRow, int(line[i]-'0'))
 		}
-		if split[1] == "ls" {
-			for i < len(lines) && !strings.Contains(lines[i], "$") {
-				split = strings.Split(lines[i], " ")
-				if split[0] == "dir" {
-					currentNode.children[split[1]] = NewNode(currentNode, true, 0)
-				} else {
-					size, _ := strconv.Atoi(split[0])
-					currentNode.children[split[1]] = NewNode(currentNode, false, size)
-				}
-				i++
-			}
-		} else {
-			if split[2] == ".." {
-				currentNode = currentNode.parent
-			} else {
-				currentNode = currentNode.children[split[2]]
-			}
-		}
+		grid = append(grid, thisRow)
 	}
 
-	var dirSizes []int
+	result := 0
 
-	setDirSizes(root, &dirSizes)
-
-	result := math.MaxInt
-
-	totalSpace := 70000000
-	unusedSpaceRequirement := 30000000
-	threshold := 0
-	if unusedSpaceRequirement-(totalSpace-root.size) > threshold {
-		threshold = unusedSpaceRequirement - (totalSpace - root.size)
-	}
-
-	for _, dirSize := range dirSizes {
-		if dirSize >= threshold && dirSize < result {
-			result = dirSize
+	for targetRow := 0; targetRow < len(grid); targetRow++ {
+		for targetCol := 0; targetCol < len(grid[0]); targetCol++ {
+			score := scenicScore(targetRow, targetCol, grid)
+			if score > result {
+				result = score
+			}
 		}
 	}
 
 	fmt.Println(result)
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
 }
 
-func setDirSizes(root *Node, dirSizes *[]int) int {
-	if !root.isDir {
-		return root.size
+func scenicScore(targetRow int, targetCol int, grid [][]int) int {
+	distanceUp := 0
+	distanceDown := 0
+	distanceLeft := 0
+	distanceRight := 0
+	for row := targetRow - 1; row >= 0; row-- {
+		distanceUp++
+		if grid[row][targetCol] >= grid[targetRow][targetCol] {
+			break
+		}
 	}
-	size := 0
-	for _, child := range root.children {
-		size += setDirSizes(child, dirSizes)
+	for row := targetRow + 1; row < len(grid); row++ {
+		distanceDown++
+		if grid[row][targetCol] >= grid[targetRow][targetCol] {
+			break
+		}
 	}
-	root.size = size
-	*dirSizes = append(*dirSizes, size)
-	return size
+	for col := targetCol - 1; col >= 0; col-- {
+		distanceLeft++
+		if grid[targetRow][col] >= grid[targetRow][targetCol] {
+			break
+		}
+	}
+	for col := targetCol + 1; col < len(grid[0]); col++ {
+		distanceRight++
+		if grid[targetRow][col] >= grid[targetRow][targetCol] {
+			break
+		}
+	}
+	return distanceUp * distanceDown * distanceLeft * distanceRight
 }
