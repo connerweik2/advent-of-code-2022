@@ -1,68 +1,66 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
+import java.awt.Point;
 
 public class Puzzle1 {
-    public static boolean visible(int targetRow, int targetCol, int[][] grid) {
-        boolean visibleUp = true, visibleDown = true, visibleLeft = true, visibleRight = true;
-        for (int row = 0; row < targetRow; row++) {
-            if (grid[row][targetCol] >= grid[targetRow][targetCol]) {
-                visibleUp = false;
-                break;
-            }
-        }
-        for (int row = targetRow + 1; row < grid.length; row++) {
-            if (grid[row][targetCol] >= grid[targetRow][targetCol]) {
-                visibleDown = false;
-                break;
-            }
-        }
-        for (int col = 0; col < targetCol; col++) {
-            if (grid[targetRow][col] >= grid[targetRow][targetCol]) {
-                visibleLeft = false;
-                break;
-            }
-        }
-        for (int col = targetCol + 1; col < grid[0].length; col++) {
-            if (grid[targetRow][col] >= grid[targetRow][targetCol]) {
-                visibleRight = false;
-                break;
-            }
-        }
-        return visibleUp || visibleDown || visibleLeft || visibleRight;
-    }
-
     public static void main(String[] args) throws FileNotFoundException {
         ArrayList<String> lines = new ArrayList<>();
 
-        File inputFile = new File("./input.txt");
+        File inputFile = new File("input.txt");
         Scanner in = new Scanner(inputFile);
 
         while (in.hasNext()) {
-            lines.add(in.next());
+            lines.add(in.nextLine());
         }
 
         in.close();
 
-        int[][] grid = new int[lines.size()][lines.get(0).length()];
+        Set<Point> visited = new HashSet<>();
 
-        for (int row = 0; row < grid.length; row++) {
-            for (int col = 0; col < grid[0].length; col++) {
-                grid[row][col] = (int)(lines.get(row).charAt(col) - '0');
-            }
-        }
+        Point head = new Point(0, 0);
+        Point tail = new Point(0, 0);
+        
+        visited.add(new Point(0, 0));
 
-        int result = 0;
-
-        for (int targetRow = 0; targetRow < grid.length; targetRow++) {
-            for (int targetCol = 0; targetCol < grid[0].length; targetCol++) {
-                if (visible(targetRow, targetCol, grid)) {
-                    result++;
+        for (int i = 0; i < lines.size(); i++) {
+            String[] split = lines.get(i).split(" ");
+            char direction = split[0].charAt(0);
+            int distance = Integer.parseInt(split[1]);
+            for (int j = 0; j < distance; j++) {
+                if (direction == 'U') {
+                    head.y--;
+                } else if (direction == 'D') {
+                    head.y++;
+                } else if (direction == 'L') {
+                    head.x--;
+                } else if (direction == 'R') {
+                    head.x++;
                 }
+                updateTail(head, tail, visited);
             }
         }
+        
+        System.out.println(visited.size());
+    }
 
-        System.out.println(result);
+    public static void updateTail(Point head, Point tail, Set<Point> visited) {
+        if (Math.abs(head.x - tail.x) <= 1 && Math.abs(head.y - tail.y) <= 1) {
+            return;
+        }
+        if (head.x > tail.x) {
+            tail.x++;
+        } else if (head.x < tail.x) {
+            tail.x--;
+        }
+        if (head.y > tail.y) {
+            tail.y++;
+        } else if (head.y < tail.y) {
+            tail.y--;
+        }
+        visited.add(new Point(tail.x, tail.y));
     }
 }
