@@ -56,9 +56,9 @@ int main(void) {
 
     int result = 0;
 
-    for (int row = 0; row < grid.size(); row++) {
-        for (int col = 0; col < grid[0].size(); col++) {
-            int score = scenic_score(row, col, grid);
+    for (int target_row = 0; target_row < grid.size(); target_row++) {
+        for (int target_col = 0; target_col < grid[0].size(); target_col++) {
+            int score = scenic_score(target_row, target_col, grid);
             if (score > result) {
                 result = score;
             }

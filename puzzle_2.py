@@ -27,9 +27,9 @@ def scenic_score(target_row, target_col):
 
 result = 0
 
-for row in range(len(grid)):
-    for col in range(len(grid[0])):
-        score = scenic_score(row, col)
+for target_row in range(len(grid)):
+    for target_col in range(len(grid[0])):
+        score = scenic_score(target_row, target_col)
         if score > result:
             result = score
             

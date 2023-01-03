@@ -27,9 +27,9 @@ def visible(target_row, target_col):
 
 result = 0
 
-for row in range(len(grid)):
-    for col in range(len(grid[0])):
-        if visible(row, col):
+for target_row in range(len(grid)):
+    for target_col in range(len(grid[0])):
+        if visible(target_row, target_col):
             result += 1
             
 print(result)
