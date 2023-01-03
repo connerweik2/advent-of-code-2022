@@ -1,93 +1,68 @@
+List<string> lines = new List<string>();
+
 using (StreamReader sr = File.OpenText("./input.txt"))
 {
-    string thisLine;
-
-    List<string> lines = new List<string>();
-
-    while ((thisLine = sr.ReadLine()) != null)
+    string line;
+    while ((line = sr.ReadLine()) != null)
     {
-        lines.Add(thisLine);
+        lines.Add(line.Trim());
     }
-
-    Node root = new Node(null, true, 0);
-    Node currentNode = root;
-
-    int i =  1;
-    while (i < lines.Count)
-    {
-        string[] split = lines[i].Split(" ");
-        i++;
-        if (i == lines.Count)
-        {
-            break;
-        }
-        if (split[1] == "ls")
-        {
-            while (i < lines.Count && !lines[i].Contains("$"))
-            {
-                split = lines[i].Split(" ");
-                if (split[0] == "dir")
-                {
-                    currentNode.children[split[1]] = new Node(currentNode, true, 0);
-                }
-                else
-                {
-                    currentNode.children[split[1]] = new Node(currentNode, false, int.Parse(split[0]));
-                }
-                i++;
-            }
-        }
-        else if (split[1] == "cd")
-        {
-            if (split[2] == "..")
-            {
-                currentNode = currentNode.parent;
-            }
-            else
-            {
-                currentNode = currentNode.children[split[2]];
-            }
-        }
-    }
-
-    List<int> dirSizes = new List<int>();
-
-    SetDirSizesClass.SetDirSizes(root, dirSizes);
-
-    Console.WriteLine((from dirSize in dirSizes where dirSize <= 100000 select dirSize).Sum());
 }
 
-class Node
+int[,] grid = new int[lines.Count, lines[0].Length];
+
+for (int row = 0; row < grid.GetLength(0); row++)
 {
-    public Node parent;
-    public bool isDir;
-    public int size;
-    public Dictionary<String, Node> children;
-
-    public Node(Node parent, bool isDir, int size)
+    for (int col = 0; col < grid.GetLength(1); col++)
     {
-        this.parent = parent;
-        this.isDir = isDir;
-        this.size = size;
-        this.children = new Dictionary<String, Node>();
+        grid[row,col] = (int)(lines[row][col] - '0');
     }
 }
 
-class SetDirSizesClass
+int result = 0;
+
+for (int targetRow = 0; targetRow < grid.GetLength(0); targetRow++)
 {
-    public static int SetDirSizes(Node root, List<int> dirSizes)
+    for (int targetCol = 0; targetCol < grid.GetLength(1); targetCol++)
     {
-        if (!root.isDir)
+        bool visibleUp = true, visibleDown = true, visibleLeft = true, visibleRight = true;
+        for (int row = 0; row < targetRow; row++)
         {
-            return root.size;
+            if (grid[row, targetCol] >= grid[targetRow, targetCol])
+            {
+                visibleUp = false;
+                break;
+            }
         }
-        int dirSize = 0;
-        foreach (Node child in root.children.Values)
+        for (int row = targetRow + 1; row < grid.GetLength(0); row++)
         {
-            dirSize += SetDirSizes(child, dirSizes);
+            if (grid[row, targetCol] >= grid[targetRow, targetCol])
+            {
+                visibleDown = false;
+                break;
+            }
         }
-        root.size = dirSize;
-        dirSizes.Add(dirSize);
-        return dirSize;
+        for (int col = 0; col < targetCol; col++)
+        {
+            if (grid[targetRow, col] >= grid[targetRow, targetCol])
+            {
+                visibleLeft = false;
+                break;
+            }
+        }
+        for (int col = targetCol + 1; col < grid.GetLength(1); col++)
+        {
+            if (grid[targetRow, col] >= grid[targetRow, targetCol])
+            {
+                visibleRight = false;
+                break;
+            }
+        }
+        if (visibleUp || visibleDown || visibleLeft || visibleRight)
+        {
+            result++;
+        }
     }
 }
+
+Console.WriteLine(result);
