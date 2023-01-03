@@ -1,33 +1,35 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <unordered_map>
 using namespace std;
 
-class Node {
-    public:
-        Node *parent;
-        bool is_dir;
-        int size;
-        unordered_map<string, Node*> children;
-        Node(Node *parent, bool is_dir, int size) {
-            this->parent = parent;
-            this->is_dir = is_dir;
-            this->size = size;
+bool visible(int target_row, int target_col, vector<vector<int>> grid) {
+    bool visible_up = true, visible_down = true, visible_left = true, visible_right = true;
+    for (int row = 0; row < target_row; row++) {
+        if (grid[row][target_col] >= grid[target_row][target_col]) {
+            visible_up = false;
+            break;
         }
-};
-
-int set_dir_sizes(Node* root, vector<int> *dir_sizes) {
-    if (!root->is_dir) {
-        return root->size;
     }
-    int dir_size = 0;
-    for (const auto & [key, value] : root->children) {
-        dir_size += set_dir_sizes(value, dir_sizes);
+    for (int row = target_row + 1; row < grid.size(); row++) {
+        if (grid[row][target_col] >= grid[target_row][target_col]) {
+            visible_down = false;
+            break;
+        }
     }
-    root->size = dir_size;
-    (*dir_sizes).push_back(dir_size);
-    return dir_size;
+    for (int col = 0; col < target_col; col++) {
+        if (grid[target_row][col] >= grid[target_row][target_col]) {
+            visible_left = false;
+            break;
+        }
+    }
+    for (int col = target_col + 1; col < grid[0].size(); col++) {
+        if (grid[target_row][col] >= grid[target_row][target_col]) {
+            visible_right = false;
+            break;
+        }
+    }
+    return visible_up || visible_down || visible_left || visible_right;
 }
 
 int main(void) {
@@ -35,13 +37,6 @@ int main(void) {
     
     string line;
     vector<string> lines;
-    vector<int> dir_sizes;
-
-    Node *root;
-    Node *current_node;
-
-    root = new Node(NULL, true, 0);
-    current_node = root;
 
     while (getline(input_file, line)) {
         lines.push_back(line);
@@ -49,45 +44,24 @@ int main(void) {
 
     input_file.close();
 
-    int i = 1;
-    while (i < lines.size()) {
-        size_t space_index = lines[i].find(' ');
-        size_t second_space_index = lines[i].find(' ', space_index + 1);
-        string first = lines[i].substr(0, space_index);
-        string second = lines[i].substr(space_index + 1, second_space_index - (space_index + 1));
-        if (i == lines.size()) {
-            break;
+    vector<vector<int>> grid;
+    
+    for (int row = 0; row < lines.size(); row++) {
+        vector<int> this_row;
+        for (int col = 0; col < lines[0].size(); col++) {
+            this_row.push_back((int)(lines[row][col] - '0'));
         }
-        if (!second.compare("ls")) {
-            i++;
-            while (i < lines.size() and lines[i].find("$") == string::npos) {
-                size_t space_index = lines[i].find(' ');
-                size_t second_space_index = lines[i].find(' ', space_index + 1);
-                string first = lines[i].substr(0, space_index);
-                string second = lines[i].substr(space_index + 1, second_space_index - (space_index + 1));
-                if (!first.compare("dir")) {
-                    current_node->children[second] = new Node(current_node, true, 0);
-                } else {
-                    current_node->children[second] = new Node(current_node, false, stoi(first));
-                }
-                i++;
-            }
-        } else if (!second.compare("cd")) {
-            string third = lines[i].substr(second_space_index + 1, string::npos);
-            if (!third.compare("..")) {
-                current_node = current_node->parent;
-            } else {
-                current_node = current_node->children[third];
-            }
-            i++;
-        }
+        grid.push_back(this_row);
     }
 
-    set_dir_sizes(root, &dir_sizes);
-
     int result = 0;
-    for (auto dir_size : dir_sizes) {
-        if (dir_size <= 100000) result += dir_size;
+
+    for (int row = 0; row < grid.size(); row++) {
+        for (int col = 0; col < grid[0].size(); col++) {
+            if (visible(row, col, grid)) {
+                result++;
+            }
+        }
     }
 
     cout << result << endl;

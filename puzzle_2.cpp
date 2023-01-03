@@ -1,33 +1,35 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <unordered_map>
 using namespace std;
 
-class Node {
-    public:
-        Node *parent;
-        bool is_dir;
-        int size;
-        unordered_map<string, Node*> children;
-        Node(Node *parent, bool is_dir, int size) {
-            this->parent = parent;
-            this->is_dir = is_dir;
-            this->size = size;
+int scenic_score(int target_row, int target_col, vector<vector<int>> grid) {
+    int distance_up = 0, distance_down = 0, distance_left = 0, distance_right = 0;
+    for (int row = target_row - 1; row >= 0; row--) {
+        distance_up++;
+        if (grid[row][target_col] >= grid[target_row][target_col]) {
+            break;
         }
-};
-
-int set_dir_sizes(Node* root, vector<int> *dir_sizes) {
-    if (!root->is_dir) {
-        return root->size;
     }
-    int dir_size = 0;
-    for (const auto & [key, value] : root->children) {
-        dir_size += set_dir_sizes(value, dir_sizes);
+    for (int row = target_row + 1; row < grid.size(); row++) {
+        distance_down++;
+        if (grid[row][target_col] >= grid[target_row][target_col]) {
+            break;
+        }
     }
-    root->size = dir_size;
-    (*dir_sizes).push_back(dir_size);
-    return dir_size;
+    for (int col = target_col - 1; col >= 0; col--) {
+        distance_left++;
+        if (grid[target_row][col] >= grid[target_row][target_col]) {
+            break;
+        }
+    }
+    for (int col = target_col + 1; col < grid[0].size(); col++) {
+        distance_right++;
+        if (grid[target_row][col] >= grid[target_row][target_col]) {
+            break;
+        }
+    }
+    return distance_up * distance_down * distance_left * distance_right;
 }
 
 int main(void) {
@@ -35,13 +37,6 @@ int main(void) {
     
     string line;
     vector<string> lines;
-    vector<int> dir_sizes;
-
-    Node *root;
-    Node *current_node;
-
-    root = new Node(NULL, true, 0);
-    current_node = root;
 
     while (getline(input_file, line)) {
         lines.push_back(line);
@@ -49,50 +44,25 @@ int main(void) {
 
     input_file.close();
 
-    int i = 1;
-    while (i < lines.size()) {
-        size_t space_index = lines[i].find(' ');
-        size_t second_space_index = lines[i].find(' ', space_index + 1);
-        string first = lines[i].substr(0, space_index);
-        string second = lines[i].substr(space_index + 1, second_space_index - (space_index + 1));
-        if (i == lines.size()) {
-            break;
+    vector<vector<int>> grid;
+    
+    for (int row = 0; row < lines.size(); row++) {
+        vector<int> this_row;
+        for (int col = 0; col < lines[0].size(); col++) {
+            this_row.push_back((int)(lines[row][col] - '0'));
         }
-        if (!second.compare("ls")) {
-            i++;
-            while (i < lines.size() and lines[i].find("$") == string::npos) {
-                size_t space_index = lines[i].find(' ');
-                size_t second_space_index = lines[i].find(' ', space_index + 1);
-                string first = lines[i].substr(0, space_index);
-                string second = lines[i].substr(space_index + 1, second_space_index - (space_index + 1));
-                if (!first.compare("dir")) {
-                    current_node->children[second] = new Node(current_node, true, 0);
-                } else {
-                    current_node->children[second] = new Node(current_node, false, stoi(first));
-                }
-                i++;
-            }
-        } else if (!second.compare("cd")) {
-            string third = lines[i].substr(second_space_index + 1, string::npos);
-            if (!third.compare("..")) {
-                current_node = current_node->parent;
-            } else {
-                current_node = current_node->children[third];
-            }
-            i++;
-        }
+        grid.push_back(this_row);
     }
 
-    set_dir_sizes(root, &dir_sizes);
+    int result = 0;
 
-    int total_space = 70000000;
-    int unused_space_requirement = 30000000;
-    int threshold = max(0, unused_space_requirement - (total_space - root->size));
-
-    int result = INT_MAX;
-
-    for (auto dir_size : dir_sizes) {
-        if (dir_size >= threshold && dir_size < result) result = dir_size;
+    for (int row = 0; row < grid.size(); row++) {
+        for (int col = 0; col < grid[0].size(); col++) {
+            int score = scenic_score(row, col, grid);
+            if (score > result) {
+                result = score;
+            }
+        }
     }
 
     cout << result << endl;
