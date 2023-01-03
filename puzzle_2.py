@@ -3,34 +3,41 @@ lines = []
 with open('./input.txt', 'r') as f:
     lines = [line.strip() for line in f.readlines()]
 
-grid = [[ord(c) - ord('0') for c in line] for line in lines]
+visited = set()
 
-def scenic_score(target_row, target_col):
-    distance_up, distance_down, distance_left, distance_right = 0, 0, 0, 0
-    for row in range(target_row - 1, -1, -1):
-        distance_up += 1
-        if grid[row][target_col] >= grid[target_row][target_col]:
-            break
-    for row in range(target_row + 1, len(grid)):
-        distance_down += 1
-        if grid[row][target_col] >= grid[target_row][target_col]:
-            break
-    for col in range(target_col - 1, -1, -1):
-        distance_left += 1
-        if grid[target_row][col] >= grid[target_row][target_col]:
-            break
-    for col in range(target_col + 1, len(grid[0])):
-        distance_right += 1
-        if grid[target_row][col] >= grid[target_row][target_col]:
-            break
-    return distance_up * distance_down * distance_left * distance_right
+rope = []
+for i in range(10):
+    rope.append([0, 0])
 
-result = 0
+visited.add((0, 0))
 
-for target_row in range(len(grid)):
-    for target_col in range(len(grid[0])):
-        score = scenic_score(target_row, target_col)
-        if score > result:
-            result = score
-            
-print(result)
+def processMove(direction):
+    if direction == 'U':
+        rope[0][1] -= 1
+    elif direction == 'D':
+        rope[0][1] += 1
+    elif direction == 'L':
+        rope[0][0] -= 1
+    elif direction == 'R':
+        rope[0][0] += 1
+    for i in range(1, len(rope)):
+        if abs(rope[i - 1][0] - rope[i][0]) <= 1 and abs(rope[i - 1][1] - rope[i][1]) <= 1:
+            return
+        if rope[i - 1][0] > rope[i][0]:
+            rope[i][0] += 1
+        elif rope[i - 1][0] < rope[i][0]:
+            rope[i][0] -= 1
+        if rope[i - 1][1] > rope[i][1]:
+            rope[i][1] += 1
+        elif rope[i - 1][1] < rope[i][1]:
+            rope[i][1] -= 1
+    visited.add((rope[len(rope) - 1][0], rope[len(rope) - 1][1]))
+
+for line in lines:
+    split = line.split(" ")
+    direction = split[0]
+    distance = int(split[1])
+    for j in range(distance):
+        processMove(direction)
+
+print(len(visited))
