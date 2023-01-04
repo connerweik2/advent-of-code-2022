@@ -37,7 +37,7 @@ for line in lines:
     split = line.split(" ")
     direction = split[0]
     distance = int(split[1])
-    for j in range(distance):
+    for i in range(distance):
         processMove(direction)
 
 print(len(visited))

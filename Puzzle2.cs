@@ -1,4 +1,6 @@
-﻿List<string> lines = new List<string>();
+﻿using System.Drawing;
+
+List<string> lines = new List<string>();
 
 using (StreamReader sr = File.OpenText("./input.txt"))
 {
@@ -9,61 +11,70 @@ using (StreamReader sr = File.OpenText("./input.txt"))
     }
 }
 
-int[,] grid = new int[lines.Count, lines[0].Length];
+HashSet<Point> visited = new HashSet<Point>();
 
-for (int row = 0; row < grid.GetLength(0); row++)
+List<Point> rope = new List<Point>();
+for (int i = 0; i < 10; i++)
 {
-    for (int col = 0; col < grid.GetLength(1); col++)
+    rope.Add(new Point(0, 0));
+}
+
+visited.Add(new Point(0, 0));
+
+foreach (string line in lines)
+{
+    string[] split = line.Split(" ");
+    char direction = split[0][0];
+    int distance = int.Parse(split[1]);
+    
+    for (int i = 0; i < distance; i++)
     {
-        grid[row,col] = (int)(lines[row][col] - '0');
+        ProcessMove(rope, visited, direction);
     }
 }
 
-int result = 0;
+Console.WriteLine(visited.Count);
 
-for (int targetRow = 0; targetRow < grid.GetLength(0); targetRow++)
+static void ProcessMove(List<Point> rope, HashSet<Point> visited, char direction)
 {
-    for (int targetCol = 0; targetCol < grid.GetLength(1); targetCol++)
+    if (direction == 'U')
     {
-        int distanceUp = 0, distanceDown = 0, distanceLeft = 0, distanceRight = 0;
-        for (int row = targetRow - 1; row >= 0; row--)
+        rope[0] = new Point(rope[0].X, rope[0].Y - 1);
+    }
+    else if (direction == 'D')
+    {
+        rope[0] = new Point(rope[0].X, rope[0].Y + 1);
+    }
+    else if (direction == 'L')
+    {
+        rope[0] = new Point(rope[0].X - 1, rope[0].Y);
+    }
+    else if (direction == 'R')
+    {
+        rope[0] = new Point(rope[0].X + 1, rope[0].Y);
+    }
+    for (int i = 1; i < rope.Count; i++)
+    {
+        if (Math.Abs(rope[i - 1].X - rope[i].X) <= 1 && Math.Abs(rope[i - 1].Y - rope[i].Y) <= 1)
         {
-            distanceUp++;
-            if (grid[row, targetCol] >= grid[targetRow, targetCol])
-            {
-                break;
-            }
+            return;
         }
-        for (int row = targetRow + 1; row < grid.GetLength(0); row++)
+        if (rope[i - 1].X > rope[i].X)
         {
-            distanceDown++;
-            if (grid[row, targetCol] >= grid[targetRow, targetCol])
-            {
-                break;
-            }
+            rope[i] = new Point(rope[i].X + 1, rope[i].Y);
         }
-        for (int col = targetCol - 1; col >= 0; col--)
+        else if (rope[i - 1].X < rope[i].X)
         {
-            distanceLeft++;
-            if (grid[targetRow, col] >= grid[targetRow, targetCol])
-            {
-                break;
-            }
+            rope[i] = new Point(rope[i].X - 1, rope[i].Y);
         }
-        for (int col = targetCol + 1; col < grid.GetLength(1); col++)
+        if (rope[i - 1].Y > rope[i].Y)
         {
-            distanceRight++;
-            if (grid[targetRow, col] >= grid[targetRow, targetCol])
-            {
-                break;
-            }
+            rope[i] = new Point(rope[i].X, rope[i].Y + 1);
         }
-        int scenicScore = distanceUp * distanceDown * distanceLeft * distanceRight;
-        if (scenicScore > result)
+        else if (rope[i - 1].Y < rope[i].Y)
         {
-            result = scenicScore;
+            rope[i] = new Point(rope[i].X, rope[i].Y - 1);
         }
     }
+    visited.Add(rope[rope.Count - 1]);
 }
-
-Console.WriteLine(result);
