@@ -5,8 +5,59 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
+
+type point struct {
+	x int
+	y int
+}
+
+func abs(x int) int {
+	if x > 0 {
+		return x
+	}
+	return -x
+}
+
+func newPoint(x int, y int) point {
+	returnPoint := point{x: x, y: y}
+	return returnPoint
+}
+
+func processMove(visited *map[point]bool, rope *[]point, direction byte) {
+	if direction == 'U' {
+		(*rope)[0].y--
+	} else if direction == 'D' {
+		(*rope)[0].y++
+	} else if direction == 'L' {
+		(*rope)[0].x--
+	} else {
+		(*rope)[0].x++
+	}
+
+	for i := 1; i < len(*rope); i++ {
+		if abs((*rope)[i-1].x-(*rope)[i].x) <= 1 &&
+			abs((*rope)[i-1].y-(*rope)[i].y) <= 1 {
+			return
+		}
+
+		if (*rope)[i-1].x > (*rope)[i].x {
+			(*rope)[i].x++
+		} else if (*rope)[i-1].x < (*rope)[i].x {
+			(*rope)[i].x--
+		}
+
+		if (*rope)[i-1].y > (*rope)[i].y {
+			(*rope)[i].y++
+		} else if (*rope)[i-1].y < (*rope)[i].y {
+			(*rope)[i].y--
+		}
+
+		(*visited)[newPoint((*rope)[len((*rope))-1].x, (*rope)[len((*rope))-1].y)] = true
+	}
+}
 
 func main() {
 	var lines []string
@@ -23,62 +74,27 @@ func main() {
 		lines = append(lines, strings.TrimSpace(scanner.Text()))
 	}
 
-	var grid [][]int
+	visited := make(map[point]bool)
+
+	var rope []point
+	for i := 0; i < 10; i++ {
+		rope = append(rope, newPoint(0, 0))
+	}
+
+	visited[newPoint(0, 0)] = true
 
 	for _, line := range lines {
-		var thisRow []int
-		for i, _ := range line {
-			thisRow = append(thisRow, int(line[i]-'0'))
-		}
-		grid = append(grid, thisRow)
-	}
-
-	result := 0
-
-	for targetRow := 0; targetRow < len(grid); targetRow++ {
-		for targetCol := 0; targetCol < len(grid[0]); targetCol++ {
-			score := scenicScore(targetRow, targetCol, grid)
-			if score > result {
-				result = score
-			}
+		split := strings.Split(line, " ")
+		direction := split[0][0]
+		distance, _ := strconv.Atoi(split[1])
+		for i := 0; i < distance; i++ {
+			processMove(&visited, &rope, direction)
 		}
 	}
 
-	fmt.Println(result)
+	fmt.Println(len(visited))
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func scenicScore(targetRow int, targetCol int, grid [][]int) int {
-	distanceUp := 0
-	distanceDown := 0
-	distanceLeft := 0
-	distanceRight := 0
-	for row := targetRow - 1; row >= 0; row-- {
-		distanceUp++
-		if grid[row][targetCol] >= grid[targetRow][targetCol] {
-			break
-		}
-	}
-	for row := targetRow + 1; row < len(grid); row++ {
-		distanceDown++
-		if grid[row][targetCol] >= grid[targetRow][targetCol] {
-			break
-		}
-	}
-	for col := targetCol - 1; col >= 0; col-- {
-		distanceLeft++
-		if grid[targetRow][col] >= grid[targetRow][targetCol] {
-			break
-		}
-	}
-	for col := targetCol + 1; col < len(grid[0]); col++ {
-		distanceRight++
-		if grid[targetRow][col] >= grid[targetRow][targetCol] {
-			break
-		}
-	}
-	return distanceUp * distanceDown * distanceLeft * distanceRight
 }
