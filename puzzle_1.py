@@ -11,10 +11,10 @@ i = 1
 monkeys = []
 
 class Monkey:
-    def __init__(self, starting_items, operation, test_divisible_value, throw_to_true, throw_to_false):
+    def __init__(self, starting_items, operation, divisor, throw_to_true, throw_to_false):
         self.items = starting_items
         self.operation = operation
-        self.test_divisible_value = test_divisible_value
+        self.divisor = divisor
         self.throw_to_true = throw_to_true
         self.throw_to_false = throw_to_false
         self.inspect_count = 0
@@ -27,7 +27,7 @@ while i < len(lines):
     operation = lines[i].replace('Operation: new = ', '')
     i += 1
 
-    test_divisible_value = int(lines[i].split(' ')[-1])
+    divisor = int(lines[i].split(' ')[-1])
     i += 1
 
     throw_to_true = int(lines[i].split(' ')[-1])
@@ -36,7 +36,7 @@ while i < len(lines):
     throw_to_false = int(lines[i].split(' ')[-1])
     i += 1
 
-    monkeys.append(Monkey(starting_items, operation, test_divisible_value, throw_to_true, throw_to_false))
+    monkeys.append(Monkey(starting_items, operation, divisor, throw_to_true, throw_to_false))
 
     i += 2
 
@@ -60,7 +60,7 @@ for this_round in range(num_rounds):
 
             monkey.inspect_count += 1
 
-            if new_worry_level % monkey.test_divisible_value == 0:
+            if new_worry_level % monkey.divisor == 0:
                 monkeys[monkey.throw_to_true].items.append(new_worry_level)
             else:
                 monkeys[monkey.throw_to_false].items.append(new_worry_level)
