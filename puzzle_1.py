@@ -65,7 +65,7 @@ for this_round in range(num_rounds):
             else:
                 monkeys[monkey.throw_to_if_false].items.append(new_worry_level)
 
-        monkey.items = []
+        monkey.items.clear()
 
 monkey_activity = [monkey.inspect_count for monkey in monkeys]
 
