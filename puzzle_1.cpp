@@ -24,22 +24,6 @@ class Monkey {
     }
 };
 
-string trim(string s) {
-    size_t substring_start_index = 0;
-    while (substring_start_index < s.length() && isspace(s[substring_start_index])) {
-        substring_start_index++;
-    }
-    if (substring_start_index == s.length()) {
-        return "";
-    }
-    size_t substring_end_index = s.length() - 1;
-    while (isspace(s[substring_end_index])) {
-        substring_end_index--;
-    }
-    substring_end_index++;
-    return s.substr(substring_start_index, substring_end_index);
-}
-
 vector<string> split(string s) {
     vector<string> result;
     size_t substring_start_index = 0;
@@ -72,7 +56,7 @@ int main(void) {
     vector<string> lines;
 
     while (getline(input_file, line)) {
-        lines.push_back(trim(line));
+        lines.push_back(line);
     }
 
     input_file.close();
@@ -91,7 +75,7 @@ int main(void) {
         }
         i ++;
 
-        string operation = lines[i].substr(17);
+        string operation = lines[i].substr(19);
         i++;
 
         line_split = split(lines[i]);
