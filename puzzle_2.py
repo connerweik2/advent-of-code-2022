@@ -47,8 +47,7 @@ for monkey in monkeys:
     product_of_divisors *= monkey.divisor
 
 for this_round in range(num_rounds):
-    for monkey_number in range(len(monkeys)):
-        monkey = monkeys[monkey_number]
+    for monkey in monkeys:
         for item in monkey.items:
             split = monkey.operation.split(' ')
             left_operand = item if split[0] == 'old' else int(split[0])
