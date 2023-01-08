@@ -35,7 +35,7 @@ public class Puzzle2 {
             i++;
 
             split = lines.get(i).split(" ");
-            int divisor = Integer.parseInt(split[split.length - 1]);
+            long divisor = Integer.parseInt(split[split.length - 1]);
             i++;
 
             split = lines.get(i).split(" ");
@@ -101,12 +101,12 @@ public class Puzzle2 {
 class Monkey {
     public ArrayList<Long> items;
     public String operation;
-    public int divisor;
+    public long divisor;
     public int throwToIfTrue;
     public int throwToIfFalse;
     public int inspectCount;
 
-    public Monkey(ArrayList<Long> items, String operation, int divisor, int throwToIfTrue, int throwToIfFalse) {
+    public Monkey(ArrayList<Long> items, String operation, long divisor, int throwToIfTrue, int throwToIfFalse) {
         this.items = items;
         this.operation = operation;
         this.divisor = divisor;
