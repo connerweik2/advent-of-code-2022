@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 
@@ -75,7 +76,7 @@ int main(void) {
         }
         i ++;
 
-        string operation = lines[i].substr(19);
+        string operation = lines[i].substr(strlen("  Operation: new = "));
         i++;
 
         line_split = split(lines[i]);
