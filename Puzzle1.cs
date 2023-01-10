@@ -19,6 +19,8 @@ bool[,] visited = new bool[numRows, numCols];
 int sRow = -1, sCol = -1;
 int eRow = -1, eCol = -1;
 
+Queue<Tuple<int, int>> queue = new Queue<Tuple<int, int>>();
+
 for (int row = 0; row < numRows; row++)
 {
     for (int col = 0; col < numCols; col++)
@@ -28,6 +30,8 @@ for (int row = 0; row < numRows; row++)
         {
             sRow = row;
             sCol = col;
+            visited[sRow, sCol] = true;
+            queue.Enqueue(Tuple.Create(sRow, sCol));
             grid[row, col] = (int)('a');
         }
         else if (c == 'E')
@@ -46,11 +50,6 @@ for (int row = 0; row < numRows; row++)
 int result = 1;
 
 int[,] dir = new int[,] {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-Queue<Tuple<int, int>> queue = new Queue<Tuple<int, int>>();
-
-visited[sRow, sCol] = true;
-queue.Enqueue(Tuple.Create(sRow, sCol));
 
 while (true)
 {

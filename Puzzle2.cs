@@ -30,6 +30,8 @@ for (int row = 0; row < numRows; row++)
         {
             sRow = row;
             sCol = col;
+            visited[sRow, sCol] = true;
+            queue.Enqueue(Tuple.Create(sRow, sCol));
             grid[row, col] = (int)('a');
         }
         else if (c == 'E')
@@ -54,9 +56,6 @@ for (int row = 0; row < numRows; row++)
 int result = 1;
 
 int[,] dir = new int[,] {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-visited[sRow, sCol] = true;
-queue.Enqueue(Tuple.Create(sRow, sCol));
 
 while (true)
 {
