@@ -40,12 +40,6 @@ public class Puzzle2 {
         return currentList;
     }
 
-    // public static String toString(ArrayList<Object> o) {
-    //     String resultString = "[";
-
-    //     return resultString;
-    // }
-
     public static int compare(ArrayList<Object> left, ArrayList<Object> right) {
         for (int i = 0; i < Math.min(left.size(), right.size()); i++) {
             if (left.get(i) instanceof Integer && right.get(i) instanceof Integer) {
