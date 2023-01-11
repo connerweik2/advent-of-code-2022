@@ -6,8 +6,6 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class Puzzle1 {
-    public static boolean debug = true;
-
     public static ArrayList<Object> constructListFromString(String s) {
         int i = 1;
         ArrayList<Object> currentList = new ArrayList<>();
